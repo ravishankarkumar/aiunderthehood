@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "Ai under the hood"
   text: "We investigage how ai works under the hood"
-  tagline: My great project tagline
+  tagline: We will be adding articles very slowly
   actions:
     - theme: brand
       text: Work in Progress
@@ -14,12 +14,12 @@ hero:
       text: WIP
       link: /wip
 
-features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+# features:
+#   - title: Feature A
+#     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+#   - title: Feature B
+#     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+#   - title: Feature C
+#     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 ---
 
