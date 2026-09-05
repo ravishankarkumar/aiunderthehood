@@ -1,0 +1,181 @@
+---
+pubDatetime: 2026-09-01T00:00:00Z
+modDatetime: 2026-09-05T00:00:00Z
+title: What Is AI?
+description: "An interview-ready explanation of artificial intelligence, how AI systems learn from data, and how to discuss AI clearly in engineering interviews."
+layout: ../../../layouts/DocsLayout.astro
+---
+
+Artificial intelligence is software that performs tasks normally associated with human judgment: recognizing patterns, making predictions, classifying information, generating content, recommending actions, or adapting behavior from examples.
+
+![Overview of AI foundations, major technique families, and capabilities](/images/interview/ai-literacy/ai-overview.png)
+
+That explanation is intentionally broad. AI is not one technology. It is a family of techniques for building systems that use data, computation, and mathematical models to produce behavior that would be hard to describe with ordinary hand-written rules.
+
+In an interview, a good answer should be simple enough to be clear, but precise enough to avoid hype.
+
+---
+
+## Short Answer
+
+AI is a way of building software that learns useful patterns or mappings from data and applies them to new inputs. For example, a model might map an email to a spam score, an image to an object category, or a prompt to a generated response.
+
+> AI is not magic intelligence. It is pattern learning and decision-making under uncertainty.
+
+---
+
+## Traditional Software vs AI
+
+In traditional software, engineers usually write the rules directly.
+
+```text
+if payment_status == "failed":
+  show_payment_failed_message()
+```
+
+This works well when the rules are known and inputs are structured. Hand-written rules become impractical when the patterns are fuzzy, high-dimensional, or too numerous to enumerate, as with faces, fraud, search ranking, language, and recommendations.
+
+Instead of writing every rule, engineers train a model on data.
+
+```text
+training:  data + learning algorithm -> trained model
+inference: new input -> trained model -> prediction or generated output
+```
+
+For mathematical intuition, think of a model as an adjustable function. It accepts an input and produces an output. Its internal settings are called **parameters**: coefficients in a linear model, split points in a decision tree, or weights in a neural network.
+
+Training usually follows four steps:
+
+1. represent examples numerically
+2. produce outputs using the current parameters
+3. measure error with a **loss function**
+4. adjust the parameters to reduce that error
+
+Repeatedly adjusting the parameters to reduce loss is called **optimization**. But low training error alone is not enough. The goal is **generalization**: performing well on relevant inputs the model did not see during training.
+
+This view explains several familiar AI terms:
+
+- **features** — measurable properties or learned representations of an input
+- **parameters** — internal values adjusted during training
+- **loss** — a numerical measure of error
+- **optimization** — the process of reducing loss
+- **inference** — using a trained model on a new input
+
+Loss is only a proxy for product success. A model can optimize its training objective and still disappoint users, so evaluation must also include domain metrics and, where appropriate, human judgment.
+
+---
+
+## What an AI System Usually Contains
+
+The model is only the core component. An AI product also needs data collection and cleaning, representation, training or model selection, inference infrastructure, product logic, evaluation, monitoring, feedback, and safety or human review where the cost of error is high.
+
+Interview answers that stop at "use a model" miss the surrounding system that determines whether the product is useful, reliable, affordable, and safe.
+
+---
+
+## Machine Learning, Deep Learning, and Generative AI
+
+AI is the broad umbrella.
+
+**Machine learning** is a major part of AI in which models learn from data instead of relying only on explicit rules.
+
+**Deep learning** is machine learning with multi-layer neural networks. Those layers learn useful representations, such as visual structure in images or contextual relationships in language.
+
+**Generative AI** creates new outputs such as text, images, audio, video, or code. These models learn patterns in the distribution of training data and use them to produce new samples.
+
+A simple hierarchy:
+
+```text
+AI
+  -> Machine Learning
+      -> Deep Learning
+          -> Large Language Models and other modern generative models
+```
+
+This is a useful interview shorthand, not a perfect taxonomy: some generative methods are not deep learning, and deep learning is also used for non-generative tasks.
+
+---
+
+## Why AI Feels Different from Normal Software
+
+AI systems often estimate likelihoods, scores, rankings, or plausible next tokens rather than apply fixed rules. These estimates are not guarantees: a high score may still be wrong, and reported confidence may need calibration before it can be treated as a real-world probability.
+
+Uncertainty creates practical consequences. The same input may produce different generated outputs, performance can fall when real-world data shifts, and evaluation is harder than testing deterministic business logic. Modern AI engineering therefore requires monitoring, fallbacks, safety boundaries, and sometimes human review.
+
+---
+
+## Where This Comes Up in Interviews
+
+AI literacy may appear directly:
+
+```text
+What is AI?
+How is AI different from normal software?
+What is the difference between AI, ML, deep learning, and LLMs?
+```
+
+It may also appear in system design:
+
+```text
+Design a recommendation system.
+Design semantic search.
+Design a customer-support AI assistant.
+Design an AI feature for fraud detection.
+```
+
+Or in product and bar rounds:
+
+```text
+When would you use AI?
+When would you avoid AI?
+How would you evaluate whether an AI feature is good enough?
+What risks would you watch for before launch?
+```
+
+Strong answers connect the definition to trade-offs in data, generalization, evaluation, latency, cost, safety, and oversight.
+
+---
+
+## A Strong Interview Answer
+
+Here is a concise version you can say out loud:
+
+> AI is a broad field of building systems that perform tasks requiring human-like judgment, such as classification, prediction, recommendation, or generation. In modern machine learning, we represent inputs numerically and learn model parameters from data by optimizing a measure of error. This works well for fuzzy problems like language, images, ranking, and personalization, but it introduces uncertainty. The engineering challenge is to make the entire system—not just the model—reliable, measurable, safe, and cost-effective.
+
+That answer defines AI, explains the mathematical intuition, and shows system-level engineering judgment.
+
+---
+
+## Common Follow-Ups
+
+**Is AI the same as machine learning?**
+
+No. AI is the broader goal of creating systems that perform intelligent tasks. Machine learning is one major method for doing so.
+
+**Is an LLM an AI system?**
+
+An LLM is a model. A complete system may also include prompts, tools, retrieval, product logic, safety checks, monitoring, and user experience.
+
+**What does it mean for a model to learn?**
+
+Training adjusts the model's parameters so its outputs better match examples or feedback. The aim is to capture statistical structure that transfers to new inputs, not store an explicit rule for every case.
+
+**Why does a model need an objective or loss function?**
+
+It turns prediction error into a number the optimizer can reduce. Because that number is only a proxy for the desired behavior, choosing the wrong objective can produce a well-optimized model that still fails the product.
+
+**When should you use AI?**
+
+Use it for fuzzy patterns, language, perception, prediction, ranking, or generation when you have suitable data and can evaluate whether the output is good enough.
+
+**When should you avoid AI?**
+
+Avoid it when deterministic rules are simpler, errors are unacceptable without review, useful data or evaluation is unavailable, or the operational cost is not justified.
+
+---
+
+## Key Takeaway
+
+AI learns useful patterns from data and applies them under uncertainty.
+
+In interviews, do not describe it as magic or as a model alone. Describe it as a system: data, model, inference, evaluation, product constraints, and human boundaries.

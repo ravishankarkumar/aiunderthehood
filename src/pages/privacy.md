@@ -1,7 +1,7 @@
 ---
 title: "Privacy Policy"
 description: How Kavriq handles analytics and visitor privacy.
-layout: ../layouts/TutorialPage.astro
+layout: ../layouts/DocsLayout.astro
 ---
 
 **Last Updated:** April 2026

@@ -2,42 +2,24 @@
 import type { GetStaticPaths } from "astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import Main from "@/layouts/Main.astro";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import Card from "@/components/Card.astro";
-import Pagination from "@/components/Pagination.astro";
-import Tag from "@/components/Tag.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import DocsSidebar from "@/components/DocsSidebar.astro";
+import { getDocsNavSection } from "@/data/docsNav";
 import getSortedPosts from "@/utils/getSortedPosts";
-import getUniqueTags from "@/utils/getUniqueTags";
+import { getPath } from "@/utils/getPath";
 import { SITE } from "@/config";
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
-  return paginate(getSortedPosts(posts), { pageSize: SITE.postPerPage });
+  return paginate(getSortedPosts(posts), { pageSize: posts.length });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
 const allPosts = getSortedPosts(
   await getCollection("blog", ({ data }) => !data.draft)
 );
-const tags = getUniqueTags(allPosts);
-const tagCounts = new Map<string, number>();
-
-allPosts.forEach(post => {
-  getUniqueTags([post]).forEach(({ tag }) => {
-    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
-  });
-});
-
-const topTags = tags
-  .sort((tagA, tagB) => {
-    const countDiff = (tagCounts.get(tagB.tag) ?? 0) - (tagCounts.get(tagA.tag) ?? 0);
-    return countDiff || tagA.tagName.localeCompare(tagB.tagName);
-  })
-  .slice(0, 14);
-
 const featuredPostSlugs = [
   "07-26-introducing-the-word-ai-tadka",
   "06-27-ai-hype-vs-reality-mid-2026-check-in",
@@ -49,85 +31,61 @@ const featuredPosts = featuredPostSlugs
   .filter((post): post is CollectionEntry<"blog"> => Boolean(post))
   .slice(0, 3);
 
-const years = Array.from(
-  new Set(allPosts.map(post => post.data.pubDatetime.getFullYear()))
-).sort((yearA, yearB) => yearB - yearA);
-
-const isFirstPage = page.currentPage === 1;
+const docsSection = getDocsNavSection(Astro.url.pathname);
 ---
 
 <Layout title={`Blogs | ${SITE.title}`}>
   <Header />
-  <Main
-    pageTitle="Blogs"
-    pageDesc="Essays, field notes, and technical reflections from KAVRIQ."
-  >
+  <Breadcrumb />
+  <main id="main-content" class="app-layout pb-10 pt-6">
     {
-      isFirstPage && (
-        <>
-          <section class="mb-12">
-            <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <h2 class="text-2xl font-semibold tracking-tight">Start Here</h2>
-                <p class="mt-2 max-w-2xl text-foreground/68">
-                  A curated entry point for the essays that frame the current Kavriq conversation.
-                </p>
-              </div>
+      docsSection && (
+        <div class="mb-6 lg:hidden">
+          <details class="surface-panel rounded-2xl border border-border p-4">
+            <summary class="cursor-pointer text-sm font-semibold text-foreground">
+              {docsSection.title} contents
+            </summary>
+            <div class="mt-4">
+              <DocsSidebar section={docsSection} panel={false} />
             </div>
-            <ul class="grid gap-x-10 md:grid-cols-3">
-              {featuredPosts.map(data => <Card {...data} variant="h3" />)}
-            </ul>
-          </section>
-
-          <section class="mb-12 border-t border-border pt-8">
-            <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <h2 class="text-2xl font-semibold tracking-tight">Browse By Topic</h2>
-                <p class="mt-2 max-w-2xl text-foreground/68">
-                  Follow recurring threads across the blog without depending on publish order.
-                </p>
-              </div>
-              <a class="text-sm font-medium text-accent underline-offset-4 hover:underline" href="/tags/">
-                View all topics
-              </a>
-            </div>
-            <ul class="flex flex-wrap gap-3">
-              {topTags.map(({ tag, tagName }) => <Tag {tag} {tagName} size="sm" />)}
-            </ul>
-          </section>
-
-          <section class="mb-12 border-t border-border pt-8">
-            <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(240px,320px)] md:items-end">
-              <div>
-                <h2 class="text-2xl font-semibold tracking-tight">Timeline</h2>
-                <p class="mt-2 max-w-2xl text-foreground/68">
-                  Read chronologically when you want to follow how the ideas evolved over time.
-                </p>
-              </div>
-              <div class="surface-panel border border-border p-4">
-                <p class="text-sm uppercase tracking-wide text-foreground/50">Archive years</p>
-                <p class="mt-2 text-lg font-semibold">{years.join(" / ")}</p>
-                <a class="mt-3 inline-block text-sm font-medium text-accent underline-offset-4 hover:underline" href="/archives/">
-                  Open chronological archive
-                </a>
-              </div>
-            </div>
-          </section>
-        </>
+          </details>
+        </div>
       )
     }
 
-    <section class:list={[{ "border-t border-border pt-8": isFirstPage }]}>
-      <h2 class="text-2xl font-semibold tracking-tight">
-        {isFirstPage ? "Latest Posts" : `Blog Posts: Page ${page.currentPage}`}
-      </h2>
-      <ul class="mt-2">
-      {page.data.map(data => <Card {...data} />)}
-      </ul>
-    </section>
-  </Main>
+    <div class="grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)] xl:items-start">
+      {
+        docsSection && (
+          <div class="hidden xl:sticky xl:top-28 xl:block xl:max-h-[calc(100vh-8rem)] xl:overflow-y-auto xl:pr-1">
+            <DocsSidebar section={docsSection} />
+          </div>
+        )
+      }
 
-  <Pagination {page} />
+      <div class="min-w-0">
+        <section class="mb-12">
+          <div class="mb-5">
+            <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">My Favourite Blogs</h1>
+          </div>
+          <ul class="space-y-5">
+            {
+              featuredPosts.map(post => (
+                <li>
+                  <a
+                    class="text-lg font-semibold text-foreground underline-offset-4 transition-colors hover:text-accent hover:underline"
+                    href={getPath(post.id, post.filePath)}
+                  >
+                    {post.data.title}
+                  </a>
+                  <p class="mt-1 max-w-3xl text-foreground/68">{post.data.description}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
 
-  <Footer noMarginTop={page.lastPage > 1} />
+  <Footer />
 </Layout>

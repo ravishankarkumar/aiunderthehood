@@ -1,0 +1,353 @@
+---
+pubDatetime: 2026-08-31T00:00:00Z
+modDatetime: 2026-08-31T00:00:00Z
+title: The Engineering of Uncertainty
+description: "Why agent systems must be designed around stochastic model behavior, changing state, time, feedback, and control."
+layout: ../../../../../layouts/DocsLayout.astro
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Agent demos are often impressive for the same reason magic tricks are impressive: they show the successful path.
+
+A user gives a task. The model reasons fluently. It calls a tool. It writes code, searches the web, edits a file, analyzes a document, books a meeting, or drafts a response. The result appears in seconds. Everything feels intelligent, smooth, and almost inevitable.
+
+Then the same idea enters a real workflow.
+
+The agent forgets a constraint. A tool times out. A search result is stale. The model chooses the wrong next step. A file edit succeeds but the test suite fails. The user changes the goal halfway through. The agent retries the same broken action. It finishes step three, fails at step four, and has no clean way to resume or undo partial work.
+
+The demo looked capable. The system was not yet engineered.
+
+That gap is the engineering problem of agentic AI.
+
+---
+
+## Capability Is Not Reliability
+
+Language makes systems look more stable than they are.
+
+When an LLM explains a plan clearly, we are tempted to treat the plan as evidence of reliable execution. When it describes a tool result confidently, we are tempted to treat that confidence as verification. When it completes one example well, we are tempted to assume the behavior will generalize.
+
+But agent workflows are not single examples.
+
+Real workflows involve:
+
+- multiple steps
+- incomplete information
+- external systems
+- changing state
+- delayed feedback
+- user constraints
+- retries
+- permissions
+- partial failures
+- stop conditions
+
+The problem is not that agents are fake. The problem is that capability in one turn does not automatically become reliability across time.
+
+A model can be useful, flexible, and genuinely powerful while still being an unreliable component if the surrounding system does not control how it observes, decides, acts, and recovers.
+
+<Aside type="tip" title="The production shift">
+  A demo asks, "Can the model do this once?" Production asks, "Can the system do
+  this repeatedly, safely, observably, and recoverably?"
+</Aside>
+
+---
+
+## From Prompts to Systems
+
+Prompting is still important. Instructions, examples, schemas, and context all shape model behavior.
+
+But a prompt is not an execution model.
+
+An agent system has behavior across time. It must decide when to call the model, what context to include, which tool results to trust, which actions to permit, how to validate outputs, what to do after failure, and when to stop.
+
+That is the shift from prompt thinking to systems thinking:
+
+```text
+prompt thinking -> shape the response
+systems thinking -> shape the runtime behavior
+```
+
+Most production failures happen in the second category. The prompt may be decent while the runtime still has weak state, unclear permissions, missing validation, no recovery path, or no meaningful termination condition.
+
+---
+
+## Stochastic Models, Deterministic Expectations
+
+Traditional software is built around contracts.
+
+Given the same input, we expect the same function to produce the same output. We expect APIs to follow schemas. We expect database transactions to either commit or fail. We expect errors to be typed, logs to be inspectable, and state transitions to be explainable.
+
+LLMs do not naturally behave like that.
+
+An LLM is probabilistic. It predicts likely continuations from context. It can produce excellent answers, but it may also:
+
+- vary across runs
+- omit a constraint
+- infer the wrong intent
+- produce malformed structured output
+- over-trust weak evidence
+- choose a plausible but wrong tool
+- explain a decision better than it actually made the decision
+
+This creates a mismatch:
+
+```text
+model behavior: probabilistic, contextual, variable
+system expectation: deterministic, explicit, repeatable
+```
+
+Agentic systems sit directly between those two worlds. They use probabilistic reasoning to operate inside deterministic environments.
+
+That is why agent engineering cannot be only prompt engineering. Prompts influence model behavior, but systems must constrain execution.
+
+---
+
+## The Uncertainty Is Everywhere
+
+It is tempting to locate uncertainty inside the model alone.
+
+That is too narrow.
+
+In agent systems, uncertainty appears at almost every boundary.
+
+### Uncertain Intent
+
+The user's request may be incomplete, ambiguous, or internally inconsistent.
+
+```text
+Book something cheap near the office next week.
+```
+
+What counts as cheap? Which office? Which day? Is the agent allowed to book directly, or should it only suggest options?
+
+### Uncertain Observation
+
+The agent may not see the full environment.
+
+A retrieval tool may return only a few chunks. A browser screenshot may hide relevant content below the fold. A test failure may be a symptom rather than the cause. A file diff may not show a generated artifact that also changed.
+
+### Uncertain Decision
+
+The next step may not be obvious.
+
+Should the agent search again, ask the user, call a tool, validate an assumption, or stop? A model may choose well in one context and poorly in another.
+
+### Uncertain Action
+
+Tool calls can fail, partially succeed, or produce side effects.
+
+An email API may send the message but return a timeout. A payment API may reject a request after creating a pending record. A file edit may apply cleanly but break formatting. A browser click may hit the wrong element if the page shifts.
+
+### Uncertain Feedback
+
+The result of an action may require interpretation.
+
+A test suite may fail because of the agent's change, a flaky test, missing environment configuration, or unrelated existing breakage. A search result may be relevant but outdated. A user response may approve one part of a plan but not another.
+
+Uncertainty is not an edge case. It is the medium the agent runs through.
+
+---
+
+## Time Makes It Harder
+
+One-shot LLM features fail in relatively simple ways. The answer is good, bad, malformed, incomplete, or off-topic.
+
+Agent systems fail across time.
+
+A task may unfold over five, ten, fifty, or hundreds of steps. Each step may update state, consume budget, change external systems, add new observations, and create new obligations.
+
+This creates temporal problems:
+
+- What has already happened?
+- Which actions changed the world?
+- Which assumptions are still valid?
+- Which tool results are stale?
+- Which failures were already tried?
+- What remains to be done?
+- Can this run be interrupted and resumed?
+- What happens if the same step executes twice?
+
+Time turns model behavior into execution behavior.
+
+That is why long-running agents need checkpoints, event logs, idempotency, budgets, and explicit stop conditions. Without those, a multi-step task becomes a long conversation with consequences.
+
+---
+
+## State Is the Agent's Memory of Execution
+
+State is where the system records what matters.
+
+In a simple chatbot, state may be little more than conversation history. In an agent, that is not enough.
+
+An agent may need to track:
+
+- the original goal
+- current subgoal
+- constraints
+- plan
+- completed actions
+- failed actions
+- tool outputs
+- open questions
+- approvals
+- external IDs
+- retry counts
+- cost and token usage
+- final artifacts
+
+State lets the system avoid repeating work, preserve constraints, resume after interruption, and explain what happened.
+
+But state also creates risk. It can drift from reality. It can become stale. It can contain untrusted tool output. It can preserve an assumption after the user changes the goal. It can grow too large for the model context.
+
+So state must be designed, not merely accumulated.
+
+<Aside type="caution" title="State drift">
+  An agent can fail because its state says the task is going well even though
+  the environment says otherwise. Good systems periodically reconcile internal
+  state with external reality.
+</Aside>
+
+---
+
+## The Four Engineering Concerns
+
+Agentic systems are easiest to reason about through four concerns:
+
+1. reasoning
+2. action
+3. execution
+4. control
+
+These are not necessarily four folders in a codebase. They are lenses for system design.
+
+### Reasoning
+
+Reasoning is how the agent interprets context and chooses what to do next.
+
+It includes classification, planning, decomposition, evidence comparison, uncertainty estimation, and deciding whether more information is needed.
+
+Reasoning is where the model often helps most. But reasoning should not be trusted merely because it is fluent. Good systems make reasoning observable through plans, decisions, structured outputs, cited evidence, validation checks, or tool traces.
+
+The question is:
+
+> How does the system decide, and how do we know that decision is acceptable?
+
+### Action
+
+Action is how the agent touches the world.
+
+It includes tool calls, API requests, file edits, messages, database writes, browser clicks, deployments, and requests for human approval.
+
+Action is where usefulness becomes consequence. The more powerful the action space, the more the system needs contracts, permissions, validation, idempotency, and audit logs.
+
+The question is:
+
+> What is the agent allowed to do, and what guarantees exist around each action?
+
+### Execution
+
+Execution is how the task unfolds over time.
+
+It includes sequencing, branching, retries, timeouts, checkpoints, partial failure, resume behavior, duplicate execution, and finalization.
+
+Execution is where many demos collapse. The happy path works; the messy path is undefined.
+
+The question is:
+
+> How does the system continue, recover, or stop when reality disagrees with the plan?
+
+### Control
+
+Control is how the system stays bounded.
+
+It includes policy, guardrails, approval gates, sandboxing, rate limits, cost limits, access control, observability, escalation paths, and termination conditions.
+
+Control is not the opposite of agency. Control is what makes agency usable.
+
+The question is:
+
+> What prevents the agent from doing the wrong thing for too long or with too much power?
+
+---
+
+## A Small Example
+
+Imagine a coding agent asked to fix a failing test.
+
+In a demo, the path looks simple:
+
+```text
+read failure -> edit code -> run tests -> success
+```
+
+In a real workflow, the uncertainty appears quickly.
+
+The failure message may point to a symptom, not the cause. The repository may have unrelated failing tests. The agent may edit the wrong abstraction. The first fix may pass the targeted test but break another test. The package manager may fail because the local environment is missing a dependency. The user may have uncommitted changes that must not be overwritten.
+
+A reliable agent needs more than the ability to write code.
+
+It needs reasoning to diagnose the failure. It needs action boundaries so it does not overwrite unrelated work. It needs execution state so it knows what it tried. It needs control so it stops before destructive operations and asks when needed.
+
+The model is useful. The runtime is what makes the work trustworthy.
+
+---
+
+## Engineering the Loop
+
+The practical response to uncertainty is not to eliminate it. That is impossible.
+
+The practical response is to build systems that can operate with uncertainty:
+
+- observe before acting
+- keep explicit state
+- validate model outputs
+- constrain tool schemas
+- separate read actions from write actions
+- make side effects idempotent when possible
+- checkpoint before consequential steps
+- classify failures
+- retry selectively
+- escalate when confidence or permission is insufficient
+- stop when progress is no longer justified
+
+This is the central engineering move in agentic AI:
+
+> Put probabilistic reasoning inside deterministic structure.
+
+The model can propose, infer, classify, summarize, plan, and adapt. The system around it should define contracts, permissions, state transitions, validation, recovery, and termination.
+
+That is how agentic systems move from impressive demos to dependable workflows.
+
+---
+
+## What This Means for the Rest of v2
+
+The rest of Agentic AI v2 builds from this idea.
+
+When we study LLMs, we will treat them as probabilistic components inside systems.
+
+When we study tools, we will focus on contracts, side effects, validation, and permissions.
+
+When we study agent loops, we will pay attention to state transitions, stop conditions, retries, and recovery.
+
+When we study memory and retrieval, we will separate what the model sees from what the system knows.
+
+When we study planning and reasoning, we will distinguish useful decomposition from unreliable self-explanation.
+
+When we study evaluation, safety, and production, we will ask whether the system behaves reliably across trajectories, not whether one answer looks good.
+
+That is the v2 lens:
+
+```text
+agents are closed-loop systems operating under uncertainty over time
+```
+
+If you keep that sentence in your head, most of the architecture starts to make sense.
+
+---
+
+## Next
+
+Continue to [What an LLM Contributes](/learning/agentic-ai/v2/model-inside-agent/what-an-llm-contributes), where we move from the agent runtime to the model inside it.

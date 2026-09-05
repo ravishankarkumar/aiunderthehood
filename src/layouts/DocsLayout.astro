@@ -1,0 +1,119 @@
+---
+import type { MarkdownLayoutProps } from "astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import DocsSidebar from "@/components/DocsSidebar.astro";
+import { getDocsNavSection } from "@/data/docsNav";
+import Layout from "./Layout.astro";
+import { SITE } from "@/config";
+
+type Props = MarkdownLayoutProps<{
+  title: string;
+  description?: string;
+  pubDatetime?: Date;
+  modDatetime?: Date | null;
+}>;
+
+const { frontmatter } = Astro.props;
+const docsSection = getDocsNavSection(Astro.url.pathname);
+const hasDocsSection = Boolean(docsSection);
+
+const toDate = (value: unknown) => {
+  if (!value) return undefined;
+  if (value instanceof Date) return value;
+
+  const date = new Date(String(value));
+  return Number.isNaN(date.getTime()) ? undefined : date;
+};
+
+const pubDatetime = toDate(frontmatter.pubDatetime);
+const modDatetime = toDate(frontmatter.modDatetime);
+---
+
+<Layout
+  title={`${frontmatter.title} | ${SITE.title}`}
+  description={frontmatter.description}
+  pubDatetime={pubDatetime}
+  modDatetime={modDatetime}
+>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"
+  />
+
+  <Header />
+  <Breadcrumb />
+  <main id="main-content" class="app-layout pt-6 pb-16">
+    {
+      hasDocsSection && docsSection && (
+        <div class="mb-6 lg:hidden">
+          <details class="surface-panel rounded-2xl border border-border p-4">
+            <summary class="cursor-pointer text-sm font-semibold text-foreground">
+              {docsSection.title} contents
+            </summary>
+            <div class="mt-4">
+              <DocsSidebar section={docsSection} panel={false} />
+            </div>
+          </details>
+        </div>
+      )
+    }
+
+    <div
+      class:list={[
+        hasDocsSection
+          ? "grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)] xl:items-start"
+          : "grid",
+      ]}
+    >
+      {
+        hasDocsSection && docsSection && (
+          <div class="hidden xl:sticky xl:top-28 xl:block xl:max-h-[calc(100vh-8rem)] xl:overflow-y-auto xl:pr-1">
+            <DocsSidebar section={docsSection} />
+          </div>
+        )
+      }
+
+      <section
+        id="about"
+        class:list={[
+          "app-prose min-w-0 prose-img:border-0",
+          hasDocsSection
+            ? "mx-auto max-w-4xl xl:mx-0 xl:max-w-none"
+            : "mx-auto max-w-4xl",
+        ]}
+      >
+        <h1>{frontmatter.title}</h1>
+        <slot />
+      </section>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  :root {
+    --sl-color-accent: var(--color-accent, #007acc);
+    --sl-color-bg-inline-code: var(--color-fill, #f4f4f4);
+  }
+
+  starlight-tabs {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    margin: 1.5rem 0;
+  }
+
+  starlight-tabs div[role="tabpanel"] {
+    min-width: 0;
+  }
+
+  .starlight-aside {
+    padding: 1rem 1.1rem;
+    margin: 1.5rem 0;
+    border-left: 0.25rem solid var(--sl-color-accent);
+    background-color: color-mix(in srgb, var(--color-muted) 75%, transparent);
+    border-radius: 0 1rem 1rem 0;
+  }
+</style>

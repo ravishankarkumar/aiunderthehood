@@ -1,7 +1,7 @@
 ---
 title: "Disclaimer"
 description: Important information about Kavriq content, examples, and code usage.
-layout: ../layouts/TutorialPage.astro
+layout: ../layouts/DocsLayout.astro
 ---
 
 **Last Updated:** April 2026

@@ -1,0 +1,310 @@
+---
+pubDatetime: 2026-09-01T00:00:00Z
+modDatetime: 2026-09-01T00:00:00Z
+title: What an LLM Contributes
+description: "How language models tokenize text, represent context, predict continuations, and act as probabilistic decision components inside agents."
+layout: ../../../../../layouts/DocsLayout.astro
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+An LLM is not the agent.
+
+It is one component inside the agent system: a probabilistic language and reasoning engine that helps the runtime interpret observations, choose actions, generate structured decisions, explain results, and communicate with humans.
+
+That distinction matters because many agent failures come from expecting the model to behave like more than it is. A model can be fluent, useful, and surprisingly capable while still being incomplete, uncertain, context-bound, and probabilistic.
+
+In this article, we will build the mental model needed for the rest of Part 2:
+
+1. tokenization and token sequences
+2. embeddings and contextual representations
+3. transformer intuition
+4. context windows
+5. next-token prediction
+6. fluency vs correctness
+7. LLMs as probabilistic decision components
+
+---
+
+## The Model's Job Inside the Agent
+
+In an agent system, the LLM usually helps with judgment.
+
+It may:
+
+- interpret a user's goal
+- summarize an observation
+- classify intent
+- compare evidence
+- decide whether a tool is needed
+- propose the next action
+- generate tool arguments
+- explain a result
+- produce a final answer
+
+But it does not automatically run the whole system.
+
+The runtime still decides what context the model receives, which tools exist, what actions are allowed, how outputs are validated, how state is saved, and when the loop stops.
+
+The model contributes flexible reasoning. The system contributes structure.
+
+<Aside type="tip" title="Useful framing">
+  Treat the LLM as a powerful probabilistic component inside a controlled
+  runtime, not as a replacement for the runtime.
+</Aside>
+
+---
+
+## Tokenization and Token Sequences
+
+LLMs do not read text as whole paragraphs, sentences, or even words. They process **tokens**.
+
+A token may be:
+
+- a word
+- part of a word
+- punctuation
+- whitespace plus a word fragment
+- a short sequence of characters
+
+For example, a sentence like:
+
+```text
+Agents use tools.
+```
+
+might be represented roughly as:
+
+```text
+["Agents", " use", " tools", "."]
+```
+
+The exact split depends on the tokenizer, but the important idea is simple:
+
+```text
+text -> tokens -> model computation -> output tokens -> text
+```
+
+Tokens matter in agent systems because almost every operational constraint is token-shaped:
+
+- context window size
+- prompt length
+- tool output size
+- memory snippets
+- latency
+- cost
+- maximum output length
+
+A single LLM call may be manageable. An agent loop can make many calls, each with growing state, tool results, retrieved documents, plans, errors, and prior observations.
+
+If the runtime is careless, the agent wastes tokens on irrelevant history and starves the model of the information that actually matters.
+
+---
+
+## Embeddings and Representations
+
+Once text becomes tokens, the model turns those tokens into numerical representations.
+
+At a high level, an **embedding** is a vector representation of meaning. Similar ideas tend to land near each other in vector space. This is why embeddings are useful for semantic search, clustering, retrieval, and memory lookup.
+
+But inside a transformer, the representation of a token is not fixed. It becomes **contextual**.
+
+The word "bank" does not mean the same thing in:
+
+```text
+The agent queried the bank account.
+```
+
+and:
+
+```text
+The agent walked along the river bank.
+```
+
+The surrounding tokens change the representation.
+
+This matters for agents because the model is always interpreting observations in context. A tool result, a user instruction, a prior failure, and a current goal all influence what the model thinks a token means right now.
+
+Good context construction is therefore not just about adding more text. It is about giving the model the right surrounding information so its representations point in the right direction.
+
+---
+
+## Transformer Intuition
+
+Modern LLMs are usually transformer-based models.
+
+You do not need to know every implementation detail to build agents, but one intuition is essential:
+
+> A transformer updates each token's representation by attending to other tokens in the context.
+
+Attention lets the model relate pieces of information across the input:
+
+- a pronoun to the thing it refers to
+- an error message to the file mentioned earlier
+- a tool result to the user's original goal
+- a policy constraint to a proposed action
+- a retrieved passage to the answer being drafted
+
+In an agent, this is powerful because the model can combine user intent, state, observations, tool outputs, and instructions in one reasoning step.
+
+It is also fragile because the model can attend to the wrong thing, underweight a crucial detail, over-trust irrelevant text, or be distracted by stale context.
+
+The transformer gives the model contextual flexibility. The runtime must decide what context deserves that attention.
+
+---
+
+## Context Windows
+
+The **context window** is the maximum number of tokens a model can process in one call, including input and output.
+
+This is not memory in the human sense. It is the visible workspace for one model invocation.
+
+If a fact is not in the context window, the model usually cannot use it. If a critical constraint was mentioned earlier but dropped from the current prompt, the model may behave as if it never existed.
+
+For agents, the context window may need to hold:
+
+- system instructions
+- the user's goal
+- current state
+- recent observations
+- tool definitions
+- tool results
+- retrieved knowledge
+- partial plans
+- validation errors
+- final response requirements
+
+This creates a design problem:
+
+> What should the model see right now?
+
+Bigger context windows help, but they do not remove the problem. Large contexts can be expensive, slow, noisy, and harder for the model to use reliably.
+
+Good agents do context management. They select, summarize, retrieve, compress, and structure information instead of blindly appending everything.
+
+---
+
+## Next-Token Prediction
+
+At the lowest useful level, an LLM predicts the next token.
+
+Given a sequence of tokens, the model estimates which tokens are likely to come next. Then it generates one token, adds it to the sequence, and repeats.
+
+```text
+input tokens -> next token -> next token -> next token -> ...
+```
+
+This can sound disappointingly simple, but the behavior that emerges can be rich: translation, summarization, code generation, planning, explanation, classification, and dialogue.
+
+For agents, next-token prediction becomes useful because the model can produce text that the runtime interprets as decisions:
+
+```json
+{
+  "action": "search_docs",
+  "arguments": {
+    "query": "refund policy for annual plans"
+  }
+}
+```
+
+The model is still generating tokens. The runtime gives those tokens operational meaning by parsing them, validating them, and deciding whether to execute the action.
+
+This is the heart of LLM-based agency:
+
+```text
+probabilistic text generation -> structured decision -> controlled action
+```
+
+---
+
+## Fluency vs Correctness
+
+LLMs are trained to produce plausible continuations. That gives them fluency.
+
+Fluency is useful. It lets the model explain, summarize, draft, reason in natural language, and communicate with users.
+
+But fluency is not the same as correctness.
+
+A fluent model output can still be:
+
+- factually wrong
+- unsupported by evidence
+- inconsistent with a tool result
+- missing a constraint
+- invalid JSON
+- unsafe to execute
+- confident without being verified
+
+This distinction is especially important in agent systems because model output may become action.
+
+If a chatbot gives a wrong answer, the user may notice and correct it. If an agent converts a fluent but wrong decision into a tool call, it may change files, send messages, update records, spend money, or corrupt state.
+
+So agent systems should not treat fluent output as proof. They need validation, grounding, constraints, and feedback.
+
+<Aside type="caution" title="Agent reliability">
+  The more directly model output controls action, the more the system needs
+  typed schemas, permission checks, deterministic validation, and recovery
+  paths.
+</Aside>
+
+---
+
+## Probabilistic Decision Components
+
+The best way to think about an LLM inside an agent is as a **probabilistic decision component**.
+
+It is useful when the system needs judgment over messy inputs:
+
+- What is the user asking for?
+- Which retrieved passage is relevant?
+- Does this tool result answer the question?
+- What should be tried next?
+- Is this failure recoverable?
+- How should this be explained to a human?
+
+But because the model is probabilistic, its decisions should sit inside a controlled execution structure.
+
+That structure may include:
+
+- schemas
+- routers
+- state machines
+- tool contracts
+- validation functions
+- retry rules
+- approval gates
+- checkpoints
+- observability
+- stop conditions
+
+The model can choose. The system must govern the consequences of that choice.
+
+This is why Part 2 comes immediately after the foundations. Once we understand the agent as a closed-loop system under uncertainty, we can understand the LLM as one source of capability and one source of uncertainty inside that loop.
+
+---
+
+## What the LLM Does Not Contribute
+
+Just as important: the model does not automatically provide everything an agent needs.
+
+By itself, an LLM does not provide:
+
+- persistent memory
+- reliable access to current external facts
+- tool execution
+- permission enforcement
+- durable checkpoints
+- idempotency
+- audit logs
+- guaranteed correctness
+- a natural stop condition
+
+Those belong to the system around the model.
+
+If you ask the LLM to be the runtime, you get an agent that feels flexible but behaves inconsistently. If you give the LLM a well-designed runtime, you get a system that can use model judgment without surrendering execution control.
+
+---
+
+## Next
+
+Continue to [Sampling and Behavior](/learning/agentic-ai/v2/model-inside-agent/sampling-and-behavior), where we look at logits, temperature, top-p sampling, determinism, reproducibility, and the cost-quality trade-offs that shape agent behavior.

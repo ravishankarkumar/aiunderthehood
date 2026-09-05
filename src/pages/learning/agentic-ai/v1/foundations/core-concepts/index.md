@@ -1,7 +1,7 @@
 ---
 title: Agentic Foundations
 description: The structural and computational theories behind autonomous AI systems.
-layout: ../../../../../../layouts/TutorialPage.astro
+layout: ../../../../../../layouts/DocsLayout.astro
 ---
 
 # Agentic Foundations

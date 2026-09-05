@@ -1,5 +1,5 @@
 ---
-layout: ../layouts/AboutLayout.astro
+layout: ../layouts/DocsLayout.astro
 title: "About KAVRIQ"
 ---
 

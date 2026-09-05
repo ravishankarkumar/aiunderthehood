@@ -1,10 +1,8 @@
 ---
 title: Agentic AI Foundations
 description: A 12-part core curriculum for learning the building blocks of modern agentic AI systems.
-layout: ../../../../../layouts/TutorialPage.astro
+layout: ../../../../../layouts/DocsLayout.astro
 ---
-
-# Agentic AI Foundations
 
 Agentic AI Foundations is Kavriq's 12-part core curriculum for learning the building blocks of modern agent systems.
 

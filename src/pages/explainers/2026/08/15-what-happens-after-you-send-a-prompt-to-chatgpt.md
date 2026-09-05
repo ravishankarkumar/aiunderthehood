@@ -1,7 +1,7 @@
 ---
 title: "What Happens After You Send a Prompt to ChatGPT?"
 description: "A visual explanation of how ChatGPT turns your prompt into tokens, processes their context, and generates a response one token at a time."
-layout: ../../layouts/TutorialPage.astro
+layout: ../../../../layouts/DocsLayout.astro
 pubDatetime: 2026-08-15T05:30:00Z
 modDatetime: 2026-08-16T15:30:00Z
 tags:
@@ -370,7 +370,7 @@ The primary animation should follow one prompt through the entire pipeline witho
 
 ### Suggested sequence
 
-1. Show a user typing: **Why is the sky blue?**
+1. Show a user typing: **Why is the sky blue?** ## chatbox implemented in Murali, so this is doable.
 2. Move the prompt into a processing area.
 3. Add a small "context package" layer around it: instructions, relevant conversation, prompt, and optional tool results.
 4. Divide the prompt into visible token blocks.

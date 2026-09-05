@@ -1,7 +1,7 @@
 ---
 title: Vector Database Storage and Ingestion — Segments, WAL, and Compaction
 description: How vector databases persist data, handle real-time writes, and manage the tension between fast ingestion and high-quality ANN indexes.
-layout: ../../../layouts/TutorialPage.astro
+layout: ../../../layouts/DocsLayout.astro
 ---
 
 The ANN algorithms — HNSW, IVF-PQ — tell you how to search vectors. But a production database needs to do much more: persist data durably, handle concurrent writes, recover from crashes, and keep the index fresh as data changes. This article covers the storage engine layer that makes vector databases work in production.

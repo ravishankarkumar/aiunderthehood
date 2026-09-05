@@ -1,0 +1,372 @@
+---
+pubDatetime: 2026-08-31T00:00:00Z
+modDatetime: 2026-08-31T00:00:00Z
+title: What Is an Agentic System?
+description: A first-principles introduction to agentic systems, and how they differ from LLM calls, chatbots, workflows, and ordinary automation.
+layout: ../../../../../layouts/DocsLayout.astro
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+**Agentic System** and **Agentic AI** have quickly become dominant industry buzzwords. As with most terms that experience rapid adoption, we risk losing sight of where the word originated. When software teams talk about a "**sprint**", they rarely think about a short, high-speed footrace anymore. Similarly, it is easy to forget where **agentic** came from.
+
+Long before AI, the term was widely used in sociology and psychology to describe an individual's capacity to act independently, exercise control, and make intentional choices. In computing, it describes systems capable of taking autonomous action toward an outcome or a goal.
+
+But that raises a key question: whose goal is it?
+
+AI systems do not possess free will (at least for now), so they cannot generate goals of their own. Instead, humans define the objectives, and we construct systems with enough agency to execute toward those objectives independently.
+
+While this distinction sounds philosophical, establishing a grounded definition of agency is essential—it forms the entire foundation of agentic architecture. This course is built on a single core principle: how to grant software the autonomy it needs to solve non-deterministic problems, while engineering the guardrails that keep it strictly within bounded control.
+
+>If you are wondering how a system without human-like free will can act autonomously, stay tuned — we will break that down across the broader Kavriq series. For now, let us focus strictly on the systems engineering of Agentic AI.
+
+## Definition
+
+An **agentic system** is software that pursues a goal by repeatedly observing its environment, deciding what to do next, taking action, and using feedback to continue, change course, or stop.
+
+
+That definition is intentionally about the **system**, not just the model.
+
+An LLM can be part of an agentic system, but the LLM is not the whole agent. The agent is the runtime around it: the state, tools, boundaries, control logic, memory, validation, and loop that let the system behave over time.
+
+The simplest mental model is:
+
+```text
+agentic system = goal + environment + state + decisions + actions + feedback
+```
+
+This article is the starting point for Agentic AI v2. Before we talk about tool calling, planning, memory, retrieval, multi-agent systems, or evaluation, we need to separate four things that are often mixed together:
+
+1. an LLM call
+2. a chatbot
+3. a workflow
+4. an agentic system
+
+They may all use the same model. They do not have the same behavior. And understanding the difference between them is the first step towards understanding the Agentic Systems.
+
+---
+
+## Why the Distinction Matters
+
+The word "agent" is often used whenever an AI system feels more capable than a plain chat interface. That is understandable, but it creates confusion.
+
+A product can use an LLM and still not be agentic. A chatbot can answer questions without acting on the world. A workflow can call ten tools in sequence and still not be an agent. A simple program without an LLM can be agent-like if it observes, decides, acts, and adapts through feedback.
+
+The useful question is not:
+
+> Does this system use an LLM?
+
+The useful question is:
+
+> Does this system choose what to do next at runtime based on state and feedback?
+
+That is where agency begins.
+
+<Aside type="tip" title="Short version">
+  A workflow follows a path chosen by the developer. An agentic system can
+  choose the path while it is running.
+</Aside>
+
+---
+
+## LLM Call, Chatbot, Workflow, Agent
+
+Let us separate the common cases.
+
+### LLM Call
+
+An **LLM call** is one request to a model and one response from it.
+
+```text
+input -> model -> output
+```
+
+Example:
+
+> Summarize this paragraph in three bullets.
+
+The model receives context and produces text. There may be careful prompting, structured output, or examples, but the execution shape is still simple. The system asks once, receives once, and stops.
+
+This can be valuable. It is not yet an agentic system.
+
+### Chatbot
+
+A **chatbot** adds conversation history.
+
+```text
+message + conversation history -> model -> reply
+```
+
+The system can respond across turns. It may remember what the user said earlier in the current conversation. It may feel interactive because the user and model alternate messages.
+
+But the chatbot usually does not manage a task independently. It waits for the user, replies, and waits again. The user drives the loop.
+
+A chatbot can become part of an agentic system, but conversation alone is not agency.
+
+### Workflow
+
+A **workflow** executes a predefined sequence of steps.
+
+```text
+classify -> retrieve -> summarize -> format -> send
+```
+
+Some steps may use an LLM. Some may call tools. Some may branch based on conditions. But the important thing is that the developer has already designed the path.
+
+For example, a support triage workflow might:
+
+1. classify the ticket
+2. retrieve policy documents
+3. draft a response
+4. ask a human to approve it
+5. post the reply
+
+This is reliable precisely because it is constrained. If the branching is explicit and the system never chooses new strategies beyond the workflow definition, it is better described as an AI workflow than as an agent.
+
+That is not a downgrade. Many production systems should be workflows.
+
+### Agentic System
+
+An **agentic system** contains a runtime loop where the next step is selected during execution.
+
+```text
+observe -> decide -> act -> observe result -> decide again -> ...
+```
+
+The system may decide to search, ask a clarifying question, call a tool, inspect the result, retry differently, escalate to a human, save progress, or stop.
+
+For example, a research agent might:
+
+1. read the user's question
+2. decide what evidence is missing
+3. search one source
+4. judge that the result is insufficient
+5. search another source with a narrower query
+6. compare evidence
+7. produce an answer with caveats
+8. stop because enough evidence has been gathered
+
+The exact path is not fully known before the run begins. It emerges from the interaction between the goal, the environment, the system state, and the agent's decisions.
+
+That is the key shift.
+
+---
+
+## A Practical Comparison
+
+The distinction becomes clearer when you look at common tasks.
+
+| Use case                                  | Better fit | Why                                             |
+| ----------------------------------------- | ---------- | ----------------------------------------------- |
+| Extract fields from a known invoice shape | Workflow   | The steps and schema are stable                 |
+| Summarize one uploaded document           | LLM call   | One bounded input can produce one useful output |
+| Classify a support ticket                 | Workflow   | The decision is narrow and repeatable           |
+| Research a topic across weak sources      | Agent      | The search path depends on intermediate results |
+| Debug a failing test suite                | Agent      | The system must inspect, change, test, and loop |
+| Draft a refund response                   | Workflow   | Human approval and policy checks should govern  |
+
+The point is not that agents are always more advanced. The point is that agents are useful when the path cannot be fully known upfront.
+
+---
+
+## The Core Components
+
+Most agentic systems can be understood through five components:
+
+1. **Perception**
+2. **State**
+3. **Decision**
+4. **Action**
+5. **Feedback**
+
+These words are more useful than framework names because they describe what the system must do, regardless of implementation.
+
+### Perception
+
+Perception is how the system reads the world.
+
+For a coding agent, perception may include files, terminal output, tests, error messages, git status, and user instructions. For a customer support agent, it may include tickets, account metadata, previous messages, policy documents, and tool responses. For a browser agent, it may include page text, screenshots, DOM structure, and click results.
+
+Perception is never complete. The agent sees a shaped view of the environment, not reality itself.
+
+That matters because bad observations produce bad decisions.
+
+### State
+
+State is what the system tracks across time.
+
+It may include:
+
+- the user goal
+- constraints
+- completed steps
+- attempted actions
+- tool outputs
+- known failures
+- pending approvals
+- assumptions
+- stop conditions
+
+Without state, every step becomes a new guess. The system may repeat work, forget constraints, contradict earlier decisions, or lose track of partial progress.
+
+State is what turns a sequence of model calls into an execution.
+
+### Decision
+
+Decision is the mechanism that chooses the next step.
+
+In a modern AI agent, this often involves an LLM. But it does not have to be only an LLM. The decision mechanism may combine prompts, routing rules, classifiers, planners, score thresholds, state machines, policies, heuristics, or deterministic checks.
+
+Good agent design does not ask the model to decide everything. It chooses which decisions require model judgment and which decisions should be handled by ordinary software.
+
+### Action
+
+Action is how the system changes or queries the environment.
+
+Actions may include:
+
+- calling an API
+- searching documents
+- running code
+- editing a file
+- sending an email
+- creating a calendar event
+- opening a browser
+- asking a human for approval
+
+Action is where the system becomes useful. It is also where risk appears. A wrong answer is one kind of failure. A wrong action that changes external state is a more serious one.
+
+This is why agentic systems need permissions, validation, idempotency, logging, and human boundaries.
+
+### Feedback
+
+Feedback is the result of an action.
+
+The action might succeed, fail, time out, return partial data, return ambiguous data, or produce a result that conflicts with the current plan. The agentic system must observe that feedback and decide what it means.
+
+Feedback is what closes the loop.
+
+Without feedback, the system is just executing steps. With feedback, it can adapt.
+
+---
+
+## Goal-Directed Behavior
+
+An agentic system is organized around a goal.
+
+The goal gives the system a reason to choose one action over another. It also gives the system a way to decide when it should stop.
+
+For example:
+
+```text
+Goal: Book a meeting with the hiring panel next week.
+```
+
+That goal is not a single model response. It requires the system to inspect calendars, consider time zones, find available slots, avoid conflicts, possibly email people, wait for responses, and stop when the meeting is scheduled or when it cannot proceed safely.
+
+A useful goal has at least three properties:
+
+1. **Direction**: what outcome the system is trying to reach
+2. **Constraints**: what it must preserve or avoid
+3. **Completion criteria**: how the system knows it is done
+
+Weak goals create wandering agents. Precise goals create controllable agents.
+
+<Aside type="caution" title="A common mistake">
+  "Be helpful" is not a task goal. It is a behavioral instruction. A task goal
+  needs a concrete condition the system can work toward and eventually stop on.
+</Aside>
+
+---
+
+## Autonomy Is a Spectrum
+
+Agentic systems are not simply autonomous or non-autonomous. Autonomy exists on a spectrum.
+
+At the low end, a system may suggest a next step but wait for a human to execute it.
+
+At the middle, a system may execute reversible or low-risk actions on its own but ask for approval before consequential actions.
+
+At the high end, a system may pursue a goal for many steps, coordinate tools, recover from failures, and only involve a human when it hits a boundary.
+
+The important design question is:
+
+> Where should autonomy be allowed, and where should it stop?
+
+This depends on the domain.
+
+A code assistant can safely format a file or run tests without much ceremony. It should be more careful before deleting data, changing infrastructure, committing secrets, or modifying unrelated files. A customer support assistant might draft replies freely, but require approval before issuing refunds or changing account status.
+
+Good autonomy is bounded autonomy.
+
+---
+
+## Reactive Systems and Uncertainty
+
+Agentic systems are reactive because the next step depends on what happens during execution.
+
+The environment may change. Tools may fail. The user may add a constraint. Retrieved information may be insufficient. A previous assumption may become invalid. A model may produce malformed output. A plan may look good at step one and fail at step three.
+
+This is why agentic systems are harder to engineer than one-shot model features.
+
+They must handle uncertainty across time:
+
+- uncertainty about user intent
+- uncertainty about the environment
+- uncertainty about model outputs
+- uncertainty about tool results
+- uncertainty about whether the goal is complete
+
+The agent loop exists to reduce uncertainty. It observes, acts, checks, and adjusts.
+
+But the loop also creates new failure modes. The system can drift, loop forever, retry destructively, over-trust stale state, or keep acting after the goal has changed.
+
+So agent design is not just about making the model smarter. It is about designing a runtime that can operate under uncertainty without becoming uncontrolled.
+
+---
+
+## When Not to Use an Agent
+
+Agents are powerful, but they are not the default answer.
+
+You probably do not need an agent when:
+
+- the task has a fixed, known sequence of steps
+- deterministic rules are enough
+- the cost of a wrong action is high
+- the environment does not provide useful feedback
+- the task can be completed with one model call
+- a human should make every meaningful decision
+- the system cannot define a clear stop condition
+
+In those cases, use simpler software.
+
+Use a function. Use a form. Use a workflow. Use a queue. Use a validation rule. Use a human approval step. Use a database constraint. Use a boring system that does the job.
+
+The best agentic architecture is often the one that uses agency only where agency is actually needed.
+
+---
+
+## A Practical Test
+
+Before calling a system an agent, ask five questions:
+
+1. Does it have a goal beyond producing the next response?
+2. Does it observe an environment that can change?
+3. Does it keep state across steps?
+4. Does it choose actions at runtime?
+5. Does it use feedback to decide whether to continue, change course, or stop?
+
+If the answer is no to most of these, you probably have an LLM feature, chatbot, or workflow.
+
+If the answer is yes to most of them, you are dealing with an agentic system.
+
+That distinction matters because agentic systems require different engineering discipline. You need to think about state, permissions, validation, recovery, observability, and termination from the beginning.
+
+The model is important. But the system around the model is what makes agency real.
+
+---
+
+## Next
+
+Continue to [Anatomy of an Agent](/learning/agentic-ai/v2/foundations/anatomy-of-an-agent), where we break the loop into concrete runtime parts: environment, observation, internal state, decision mechanism, action, feedback, termination condition, and human boundaries.

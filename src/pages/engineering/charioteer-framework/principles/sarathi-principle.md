@@ -1,6 +1,6 @@
 ---
 title: Sarathi Principle
-layout: ../../../../layouts/TutorialPage.astro
+layout: ../../../../layouts/DocsLayout.astro
 pubDatetime: 2026-07-26T04:00:00Z
 modDatetime: 2026-07-26T05:11:00Z
 tags:

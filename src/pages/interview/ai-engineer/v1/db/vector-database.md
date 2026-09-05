@@ -3,7 +3,7 @@ title: Vector Databases — Interview Guide
 description: What interviewers actually ask about vector databases, how to frame your answers, and the mental models that matter.
 pubDatetime: 2022-09-25T15:20:35Z
 modDatetime: 2026-03-30T00:00:00.000Z
-layout: ../../../../../layouts/TutorialPage.astro
+layout: ../../../../../layouts/DocsLayout.astro
 ---
 
 Vector database questions became a core part of system design interviews at top tech companies from 2024 onward. This guide covers what interviewers actually ask, how to structure your answers, and the mental models that separate strong candidates from weak ones.

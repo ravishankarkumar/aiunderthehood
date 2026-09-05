@@ -1,0 +1,348 @@
+---
+pubDatetime: 2026-09-01T00:00:00Z
+modDatetime: 2026-09-01T00:00:00Z
+title: Sampling and Behavior
+description: "How logits, softmax, temperature, top-p sampling, determinism, reproducibility, and best-of-N strategies shape agent behavior."
+layout: ../../../../../layouts/DocsLayout.astro
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+An LLM does not simply "choose an answer."
+
+At generation time, it repeatedly chooses the next token from a probability distribution. The way that distribution is shaped and sampled affects the model's behavior: whether it is focused or creative, stable or varied, terse or exploratory, repetitive or diverse.
+
+For ordinary chat, sampling controls style and variation.
+
+For agents, sampling can control execution.
+
+If the model is choosing a tool, writing tool arguments, deciding whether a task is complete, or selecting the next step in a loop, small changes in sampling behavior can change what the agent actually does.
+
+This article explains the practical pieces:
+
+1. logits and softmax
+2. temperature
+3. top-p sampling
+4. determinism and reproducibility
+5. best-of-N sampling
+6. quality, diversity, latency, and cost trade-offs
+
+---
+
+## From Scores to Tokens
+
+When a model generates text, it begins with a context:
+
+```text
+The agent should call the
+```
+
+Then it scores possible next tokens.
+
+Those raw scores are called **logits**.
+
+The model might assign high scores to tokens like:
+
+```text
+" search"
+" database"
+" user"
+" tool"
+```
+
+and low scores to unrelated tokens.
+
+Logits are not probabilities yet. They are unnormalized scores. To turn them into probabilities, the model applies a function called **softmax**.
+
+```text
+logits -> softmax -> probabilities
+```
+
+After softmax, the model has a probability distribution over possible next tokens. Then a decoding strategy decides which token is selected.
+
+This repeats one token at a time until the model stops.
+
+<Aside type="tip" title="Agent lens">
+  A model response is a sequence of sampling decisions. If that response is
+  parsed as an action, sampling decisions become execution decisions.
+</Aside>
+
+---
+
+## Logits and Softmax
+
+Imagine the model has only four possible next tokens:
+
+| Token       | Logit |
+| ----------- | ----- |
+| `"search"`  | 4.0   |
+| `"answer"`  | 3.0   |
+| `"ask"`     | 1.0   |
+| `"archive"` | -1.0  |
+
+Softmax converts those scores into probabilities while preserving their relative order.
+
+The highest logit becomes the most likely token. Lower logits become less likely, but not necessarily impossible.
+
+This matters because the model is not usually choosing from one obvious option. It is choosing from a distribution.
+
+In an agent, the distribution may represent different next behaviors:
+
+- answer now
+- call a tool
+- ask the user
+- retry a failed step
+- stop
+- continue planning
+
+If the top options are close together, the agent's next step may be sensitive to sampling settings. If one option dominates, the behavior will be more stable.
+
+---
+
+## Greedy Decoding
+
+The simplest strategy is **greedy decoding**.
+
+At each step, choose the highest-probability token.
+
+```text
+always pick the most likely next token
+```
+
+Greedy decoding is fast and stable. It is useful when you want the model to be conservative, especially for narrow tasks like classification, structured routing, or generating strict formats.
+
+But greedy decoding can also be brittle. It may produce repetitive text, get stuck in common phrasing, or miss better alternatives that begin with a slightly less likely token.
+
+For agents, greedy decoding is attractive because it feels deterministic. But deterministic-looking does not mean correct. The model can still confidently choose the wrong tool, wrong branch, or wrong final answer.
+
+---
+
+## Temperature
+
+**Temperature** changes the shape of the probability distribution before sampling.
+
+Lower temperature sharpens the distribution. The most likely tokens become even more likely.
+
+Higher temperature flattens the distribution. Less likely tokens get more chance to appear.
+
+```text
+lower temperature -> more focused, more repeatable
+higher temperature -> more varied, more exploratory
+```
+
+For agent systems, temperature is not just a creativity knob.
+
+It affects:
+
+- tool selection
+- plan variation
+- argument wording
+- whether the model asks a question or proceeds
+- whether the model stops early or keeps exploring
+- how often outputs need validation repair
+
+For tasks that require structured decisions, low temperature is usually safer. For brainstorming, exploration, or candidate generation, higher temperature can be useful.
+
+The trap is using one setting everywhere.
+
+A production agent may use low temperature for routing and tool calls, but a higher temperature for generating alternative hypotheses or draft language. Different parts of the loop can have different sampling needs.
+
+---
+
+## Top-p Sampling
+
+**Top-p sampling**, also called **nucleus sampling**, chooses from the smallest set of tokens whose cumulative probability reaches a threshold `p`.
+
+If `p = 0.9`, the model sorts tokens by probability, keeps the smallest group that accounts for 90% of the probability mass, renormalizes that group, and samples from it.
+
+The useful property is that the candidate set adapts to the model's confidence.
+
+When the model is very confident, the nucleus may be tiny.
+
+When the model is uncertain, the nucleus may include many tokens.
+
+This is different from top-k sampling, which always keeps a fixed number of tokens. Top-p is often a better default for open-ended language because it avoids sampling from the unreliable long tail while still allowing diversity when the distribution is naturally broad.
+
+For agents, top-p affects how widely the model explores possible next actions or phrasings.
+
+Low top-p makes behavior narrower. High top-p allows more variety but may increase invalid or surprising outputs.
+
+---
+
+## Sampling and Agent Decisions
+
+The same sampling settings can mean different things depending on what the model is producing.
+
+If the model is writing prose, variation may be harmless.
+
+If the model is producing an action, variation may change execution.
+
+Consider this structured decision:
+
+```json
+{
+  "action": "search_docs",
+  "arguments": {
+    "query": "refund policy annual plan"
+  }
+}
+```
+
+A small sampling change might produce:
+
+```json
+{
+  "action": "answer_user",
+  "arguments": {
+    "message": "Annual plans are usually non-refundable."
+  }
+}
+```
+
+Those are not stylistic differences. They are different behaviors.
+
+One gathers evidence. The other answers from assumption.
+
+This is why agent runtimes should not depend on sampling alone for reliability. Use schemas, validation, state-machine constraints, tool permissions, retrieval requirements, and stop conditions to bound what the model can do.
+
+---
+
+## Determinism and Reproducibility
+
+Agent builders often ask for deterministic model behavior.
+
+That is understandable. Production systems need repeatability. Tests need stable outputs. Debugging is hard when the same input produces different trajectories.
+
+Lower temperature, fixed seeds, constrained decoding, and structured outputs can improve reproducibility, but they do not make an LLM identical to a pure function in every deployment context.
+
+Even when model output is stable, the agent may still be non-reproducible because the environment changes:
+
+- search results change
+- files change
+- tool latency changes
+- retrieved documents change
+- APIs return different data
+- time-sensitive context expires
+- model versions are updated
+
+For agents, reproducibility is about the whole trajectory, not only one model call.
+
+To debug an agent run, you need to capture:
+
+- model name and version
+- prompts and messages
+- sampling settings
+- tool definitions
+- tool arguments
+- tool results
+- state transitions
+- timestamps
+- approvals
+- final outputs
+
+The model call is only one part of the record.
+
+<Aside type="caution" title="Reproducibility">
+  A low temperature can make responses more stable. It does not make a
+  multi-step agent workflow reproducible unless the runtime records state,
+  tools, observations, and external effects.
+</Aside>
+
+---
+
+## Best-of-N Sampling
+
+Sometimes you want the model to generate multiple candidates and choose the best one.
+
+This is called **best-of-N**.
+
+The system might generate:
+
+- five possible plans
+- three candidate tool calls
+- ten draft answers
+- several possible diagnoses
+- multiple search queries
+
+Then it selects one candidate using a scoring function, verifier, judge model, deterministic check, or human review.
+
+Best-of-N can improve quality because the first sampled answer is not always the best answer.
+
+But it has costs:
+
+- more tokens
+- more latency
+- more model calls
+- more judging complexity
+- correlated errors if all candidates share the same blind spot
+
+For agents, best-of-N is useful when the decision is important and easy to evaluate.
+
+It is less useful when there is no reliable way to judge candidates. Generating more plans does not help if the system cannot tell which plan is safer, cheaper, more correct, or more aligned with the goal.
+
+Good use:
+
+```text
+Generate five search queries, run retrieval for each, choose the query with the best evidence coverage.
+```
+
+Risky use:
+
+```text
+Generate five unsupported answers, ask another model which one sounds best.
+```
+
+More samples are not automatically more truth.
+
+---
+
+## Quality, Diversity, Latency, and Cost
+
+Sampling is a trade-off surface.
+
+There is no single setting that is best for every agent.
+
+| Goal                  | Common choice                          | Trade-off                     |
+| --------------------- | -------------------------------------- | ----------------------------- |
+| Stable routing        | low temperature, narrow sampling       | less exploration              |
+| Creative ideation     | higher temperature, wider sampling     | more variance                 |
+| Strict tool arguments | low temperature, schema validation     | may still need repair         |
+| Better plans          | best-of-N with verifier                | higher latency and cost       |
+| Lower cost            | fewer candidates, shorter context      | less search over alternatives |
+| Safer execution       | constrained actions and approval gates | slower but more controlled    |
+
+Agent design is about assigning the right sampling strategy to the right part of the loop.
+
+A useful pattern is:
+
+- keep routing and tool calls conservative
+- allow more diversity during brainstorming or search-query generation
+- validate structured outputs regardless of temperature
+- use best-of-N only when there is a meaningful evaluator
+- record sampling settings in traces
+- prefer system constraints over hoping the model samples the right action
+
+Sampling can shape behavior. It should not be the only thing governing behavior.
+
+---
+
+## Practical Defaults for Agents
+
+As a starting point:
+
+- Use low temperature for tool selection, routing, classification, and structured outputs.
+- Use moderate temperature for drafting, explanation, and summarization.
+- Use higher temperature only for explicit exploration, ideation, or candidate generation.
+- Use top-p to limit the long tail in open-ended generation.
+- Use best-of-N when the system has a verifier or measurable scoring signal.
+- Log sampling settings for every model call.
+
+These are not laws. They are defaults that keep the agent easier to reason about.
+
+The more consequential the action, the less you should rely on sampling freedom.
+
+---
+
+## Next
+
+Continue to [Instructions and Structured Decisions](/learning/agentic-ai/v2/model-inside-agent/instructions-and-structured-decisions), where we look at system and user instructions, prompting patterns, structured output, schema validation, routing, and separating instructions from untrusted data.

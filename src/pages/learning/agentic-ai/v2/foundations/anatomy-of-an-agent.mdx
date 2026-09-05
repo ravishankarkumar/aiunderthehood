@@ -1,0 +1,468 @@
+---
+pubDatetime: 2026-08-31T00:00:00Z
+modDatetime: 2026-08-31T00:00:00Z
+title: Anatomy of an Agent
+description: "A practical breakdown of an agent's runtime parts: environment, observation, state, decision, action, feedback, termination, and boundaries."
+layout: ../../../../../layouts/DocsLayout.astro
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+An agent is not a model with a dramatic job title.
+
+An agent is a **runtime system**. It has a world it operates in, a way to observe that world, state that changes over time, a mechanism for choosing the next step, actions it can take, feedback it can read, and conditions that tell it when to stop.
+
+In the previous article, we defined an agentic system as:
+
+```text
+goal + environment + state + decisions + actions + feedback
+```
+
+Now we will open that up and look at the moving parts.
+
+The anatomy of an agent is:
+
+1. environment
+2. observation
+3. internal state
+4. decision mechanism
+5. action
+6. feedback
+7. termination condition
+8. human and external-system boundaries
+
+These parts exist whether the agent uses a frontier LLM, a small local model, a rules engine, or no model at all.
+
+---
+
+## The Agent Is the Loop
+
+Most agent diagrams put the model in the center. That is useful for explaining LLM-based agents, but it can hide the deeper structure.
+
+The agent is not only the thing that reasons. The agent is the loop that keeps running:
+
+```text
+observe -> update state -> decide -> act -> receive feedback -> repeat or stop
+```
+
+The model may help with decision-making, planning, summarization, classification, tool arguments, or natural language. But the loop decides how the model is used, what context it sees, what actions are permitted, how results are checked, and when execution ends.
+
+<Aside type="tip" title="Runtime first">
+  If you cannot describe the loop, state, actions, and stop condition, you do
+  not yet have an agent design. You have a model feature waiting for a runtime.
+</Aside>
+
+---
+
+## Environment
+
+The **environment** is the world the agent operates in.
+
+For a coding agent, the environment may include:
+
+- a repository
+- files
+- tests
+- a terminal
+- package managers
+- git history
+- user instructions
+
+For a support agent, the environment may include:
+
+- customer messages
+- account records
+- policy documents
+- refund tools
+- ticket status
+- escalation queues
+
+For a research agent, the environment may include:
+
+- search APIs
+- internal documents
+- web pages
+- citations
+- notes
+- previous evidence
+
+The environment is not just background. It shapes what the agent can perceive and what actions are meaningful.
+
+An agent without an environment is just a generator of text. An agent inside an environment becomes an operator.
+
+---
+
+## Observation
+
+An **observation** is what the agent receives from the environment.
+
+Observations are the agent's evidence. They may come from a user message, a tool result, a file diff, a test failure, a search result, a database row, a browser screenshot, or a human approval response.
+
+For example:
+
+```text
+Observation:
+The test suite failed because `test_checkout_tax_total` expected 108.50 but received 107.25.
+```
+
+That observation is not the entire environment. It is a slice of it.
+
+This distinction matters. Agents often fail because they act on partial, stale, noisy, or ambiguous observations. A browser agent may misread a visual layout. A research agent may retrieve irrelevant documents. A coding agent may inspect one error and miss the earlier root cause.
+
+Good agent systems make observation explicit:
+
+- What did the agent see?
+- Where did it come from?
+- How fresh is it?
+- Is it trusted?
+- Is it enough to decide the next action?
+
+Observation quality limits agent quality.
+
+---
+
+## Internal State
+
+**Internal state** is what the agent carries forward across steps.
+
+It is the difference between:
+
+```text
+call model
+call model
+call model
+```
+
+and:
+
+```text
+attempted search twice
+found one useful source
+rejected one stale source
+needs confirmation before sending email
+must preserve user's budget constraint
+```
+
+State can include:
+
+- the goal
+- constraints
+- current plan
+- completed steps
+- pending steps
+- tool results
+- failed attempts
+- assumptions
+- approvals
+- budgets
+- deadlines
+- final answer draft
+
+Some state lives in the model context. Some lives in application memory. Some belongs in a database, queue, event log, or checkpoint file. The important thing is that state must be represented deliberately.
+
+If state is only hidden inside a long conversation transcript, the agent becomes fragile. It may forget, reinterpret, or bury important execution facts.
+
+<Aside type="caution" title="State is not vibes">
+  A reliable agent should not merely "remember" that it is working on something.
+  It should have concrete state that the runtime can inspect, validate, save,
+  and resume.
+</Aside>
+
+---
+
+## Decision Mechanism
+
+The **decision mechanism** chooses what happens next.
+
+This is where many people immediately imagine an LLM reasoning freely. Sometimes that is right. Often it is only part of the answer.
+
+A decision mechanism may include:
+
+- deterministic rules
+- typed routers
+- state-machine transitions
+- LLM classification
+- LLM planning
+- score thresholds
+- policy checks
+- retry limits
+- human approval gates
+- validation results
+
+The key engineering question is:
+
+> Which decisions should be probabilistic, and which should be deterministic?
+
+For example, an LLM may be useful for deciding whether a customer message is angry, confused, urgent, or routine. But a refund limit should not depend on the model's mood. A retry cap should not be negotiated by the model. A permission boundary should not be phrased as a suggestion.
+
+Good agents use models where judgment helps and ordinary software where control matters.
+
+---
+
+## Action
+
+An **action** is something the agent does to the environment.
+
+Actions may read from the world:
+
+- search documents
+- inspect a file
+- query a database
+- load a web page
+- run a test
+
+Actions may also change the world:
+
+- edit a file
+- send an email
+- update a ticket
+- create a calendar event
+- issue a refund
+- deploy a service
+
+This difference is crucial. Read-only actions and state-changing actions need different controls.
+
+A read-only search can usually run freely. A destructive database migration should require stronger validation, permission, and human review. A tool that sends email needs a different boundary than a tool that drafts email.
+
+An agent's action space defines its risk.
+
+Small action space, small blast radius. Broad action space, broad responsibility.
+
+---
+
+## Feedback
+
+**Feedback** is what comes back after an action.
+
+The feedback might be:
+
+- success
+- failure
+- timeout
+- partial result
+- validation error
+- human rejection
+- conflicting evidence
+- changed external state
+
+For example:
+
+```text
+Action:
+Run the test suite.
+
+Feedback:
+17 tests passed, 1 failed, failure is in `test_checkout_tax_total`.
+```
+
+Feedback closes the loop. It lets the agent decide whether to continue, retry, change plans, escalate, or stop.
+
+But feedback is not always clean. Tools can fail unclearly. APIs can return stale data. Users can respond ambiguously. Tests can be flaky. Search results can look relevant but be wrong.
+
+So feedback must be interpreted, not merely appended to a prompt.
+
+---
+
+## Termination Condition
+
+A **termination condition** tells the agent when to stop.
+
+This is one of the most important parts of agent design and one of the easiest to neglect.
+
+An agent should stop when:
+
+- the goal is complete
+- the goal is impossible under current constraints
+- required information is missing
+- a human decision is needed
+- an approval boundary is reached
+- an error cannot be recovered from
+- a step limit is reached
+- a cost or time budget is exhausted
+
+Without termination conditions, agents drift. They keep searching, keep retrying, keep asking the model to repair its own mistakes, or keep acting after the useful work is already done.
+
+A stop condition is not a failure of autonomy. It is part of autonomy.
+
+<Aside type="tip" title="A useful test">
+  Before building an agent, write down what "done" means and what "stop and ask
+  a human" means. If neither can be stated clearly, the agent is not ready.
+</Aside>
+
+---
+
+## Human and External-System Boundaries
+
+Agents do not operate in a vacuum. They sit between humans and external systems.
+
+That boundary is where many production risks appear.
+
+A human boundary defines when the agent must ask, show, explain, wait, or hand control back. Examples:
+
+- ask before sending a message
+- ask before deleting data
+- ask when the goal is ambiguous
+- ask when confidence is low
+- ask when policy requires review
+
+An external-system boundary defines what the agent may access or change. Examples:
+
+- which APIs it can call
+- which files it can edit
+- which database tables it can read
+- which actions require approval
+- which credentials it can use
+- which network calls are allowed
+
+These boundaries should be part of the architecture, not hidden inside a prompt.
+
+Prompts can express policy. Systems must enforce policy.
+
+---
+
+## Runtime Responsibilities
+
+Once these parts are assembled, the agent runtime has several concrete responsibilities.
+
+It must manage state so the system knows what has happened, what is pending, and what constraints still apply.
+
+It must construct context so the decision mechanism receives the right observations, tool results, instructions, and memory without drowning in irrelevant history.
+
+It must execute tools through typed contracts, validate arguments, capture results, and distinguish read-only actions from state-changing actions.
+
+It must enforce guardrails such as permission checks, iteration limits, budgets, approval gates, and stop conditions.
+
+It must make execution inspectable through logs, traces, checkpoints, and clear failure states.
+
+This is why the runtime matters as much as the model. The model may decide, but the runtime determines what decisions are possible, what actions are allowed, and how the system recovers when something goes wrong.
+
+---
+
+## A Minimal Deterministic Agent Loop
+
+An agent does not need an LLM to show the core structure.
+
+Here is a tiny deterministic agent that cleans up a simple inbox. Its goal is to move every message with the label `"spam"` into an archive. It observes the inbox, updates state, decides the next action through normal Python code, acts, reads feedback, and stops.
+
+```python
+from dataclasses import dataclass, field
+
+
+@dataclass
+class Message:
+    id: int
+    subject: str
+    label: str
+    archived: bool = False
+
+
+@dataclass
+class AgentState:
+    archived_ids: list[int] = field(default_factory=list)
+    skipped_ids: list[int] = field(default_factory=list)
+    steps: int = 0
+    done: bool = False
+
+
+class InboxEnvironment:
+    def __init__(self, messages: list[Message]):
+        self.messages = messages
+
+    def observe(self) -> list[Message]:
+        return [message for message in self.messages if not message.archived]
+
+    def archive(self, message_id: int) -> str:
+        for message in self.messages:
+            if message.id == message_id:
+                message.archived = True
+                return f"archived:{message_id}"
+
+        return f"missing:{message_id}"
+
+
+def decide(observation: list[Message], state: AgentState) -> tuple[str, int | None]:
+    for message in observation:
+        if message.label == "spam":
+            return ("archive", message.id)
+
+        if message.id not in state.skipped_ids:
+            return ("skip", message.id)
+
+    return ("stop", None)
+
+
+def run_agent(environment: InboxEnvironment, max_steps: int = 20) -> AgentState:
+    state = AgentState()
+
+    while not state.done and state.steps < max_steps:
+        observation = environment.observe()
+        action, message_id = decide(observation, state)
+
+        if action == "archive" and message_id is not None:
+            feedback = environment.archive(message_id)
+
+            if feedback.startswith("archived:"):
+                state.archived_ids.append(message_id)
+            else:
+                state.done = True
+
+        elif action == "skip" and message_id is not None:
+            state.skipped_ids.append(message_id)
+
+        elif action == "stop":
+            state.done = True
+
+        state.steps += 1
+
+    return state
+
+
+messages = [
+    Message(1, "Welcome to the product", "important"),
+    Message(2, "Win a free laptop", "spam"),
+    Message(3, "Quarterly planning notes", "work"),
+    Message(4, "Cheap pills now", "spam"),
+]
+
+environment = InboxEnvironment(messages)
+final_state = run_agent(environment)
+
+print(final_state)
+print(messages)
+```
+
+There is no model here. There is no natural language reasoning. But the shape is agentic:
+
+- the inbox is the environment
+- `observe()` creates observations
+- `AgentState` tracks execution
+- `decide()` chooses the next step
+- `archive()` performs an action
+- the action result becomes feedback
+- `done` and `max_steps` provide termination
+
+This is the skeleton. In an LLM-based agent, the decision mechanism may become more flexible, the observation may include text and tool outputs, and the action space may be much larger. But the anatomy stays the same.
+
+---
+
+## Why This Anatomy Matters
+
+Once you see the parts clearly, agent design becomes easier to reason about.
+
+If the agent repeats itself, inspect state and termination.
+
+If it makes bad choices, inspect observations and the decision mechanism.
+
+If it creates risk, inspect the action space and boundaries.
+
+If it cannot recover, inspect feedback and checkpoints.
+
+If it feels impressive in a demo but unreliable in practice, inspect the loop.
+
+An agent is not made reliable by calling it an agent. It becomes reliable when each part of the runtime has a clear responsibility.
+
+---
+
+## Next
+
+Continue to [The Engineering of Uncertainty](/learning/agentic-ai/v2/foundations/the-engineering-of-uncertainty), where we look at why agent demos can feel capable while real workflows expose uncertainty, time, state, and control problems.

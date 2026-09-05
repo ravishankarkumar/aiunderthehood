@@ -1,7 +1,7 @@
 ---
 title: Engineering Agent Systems
 description: A systems-level series on uncertainty, state, execution, and control in production agent systems.
-layout: ../../../../../layouts/TutorialPage.astro
+layout: ../../../../../layouts/DocsLayout.astro
 ---
 
 # Engineering Agent Systems

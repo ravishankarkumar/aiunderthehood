@@ -1,27 +1,119 @@
 ---
 title: Agentic AI v2
-layout: ../../../../layouts/TutorialPage.astro
+layout: ../../../../layouts/DocsLayout.astro
 ---
 
-Structured curricula, versioned skill paths, and sequential learning tracks for building durable intuition across AI systems.
+Agentic AI v2 is the next Kavriq learning path for building agent systems from first principles.
 
-Use Learning when you want to start at the beginning of a topic and progress through a guided path.
+This section is currently being written. New articles will appear here as they are published, so treat this page as a live roadmap rather than a finished course.
 
----
-
-## Agentic AI v2
-
-Learn how agent systems observe, reason, plan, use tools, remember, evaluate, and recover.
-
-- [Agentic AI v1](/learning/agentic-ai/v1)
+If you want the complete set of articles today, use [Agentic AI v1](/learning/agentic-ai/v1). It is slightly older, but it already covers the full foundations track and the production-oriented engineering series.
 
 ---
 
-## Machine Learning Foundations
-coming soon...
+## Why a v2?
+
+The first Agentic AI path introduced the major concepts. v2 reorganizes the material around a sharper engineering question:
+
+> **_How do we build reliable systems around probabilistic reasoning?_**
+
+Agentic AI is changing quickly. The vocabulary, engineering patterns, frameworks, safety practices, and production techniques are all moving fast enough that a full rewrite is more useful than slowly updating the existing articles in place.
+
+That means more emphasis on state, feedback, tool contracts, checkpoints, recovery, evaluation, human boundaries, and production readiness. The goal is not just to explain agents, but to build durable intuition for designing them.
+
+When v1 was written, the ecosystem was in an exploratory phase focused on defining basic primitives. Now that agentic development has matured, the focus must shift from what agents can do to how we build them reliably. v2 moves away from broad feature coverage—such as GUI automation or specialized computer vision—to center on core systems engineering. Regardless of what tools your agent uses, v2 teaches you how to design the control loops, state boundaries, and failure-recovery mechanisms around them.
+
+Furthermore, because modern AI assistants now handle the majority of raw implementation code, v2 shifts focus from syntax-level boilerplate to architectural steering. Software engineering in an agent-driven ecosystem requires strong conceptual clarity: if you master the underlying mental models, you can direct, evaluate, and audit AI-generated systems to enforce robust architectural standards.
+
+Once v2 is fully live, v1 will be phased out.
+
+## Scope & Depth
+
+Agentic AI v2 is intentionally more detailed and conceptually comprehensive than v1. Rather than providing quick code snippets or surface-level summaries, these 44 articles are designed to give you a complete, end-to-end mental model. The goal is to build deep architectural intuition so you can confidently design, audit, and debug agentic systems in production.
 
 ---
 
-## Interview Preparation
+## Current Status
 
-coming soon...
+- [Start Agentic AI v2 Foundations](/learning/agentic-ai/v2/foundations)  
+  The v2 foundations section is live and will expand article by article.
+
+- [Read Agentic AI v1](/learning/agentic-ai/v1)  
+  Use this if you want the complete, slightly outdated version of the course now.
+
+---
+
+## What v2 Will Cover
+
+Agentic AI v2 is planned as a full systems-level curriculum: from the smallest definition of agency to production reliability, security, observability, deployment, and a capstone agent.
+
+### [Part 1: Foundations](/learning/agentic-ai/v2/foundations)
+
+- [What Is an Agentic System?](/learning/agentic-ai/v2/foundations/what-is-an-agentic-system)
+- [Anatomy of an Agent](/learning/agentic-ai/v2/foundations/anatomy-of-an-agent)
+- [The Engineering of Uncertainty](/learning/agentic-ai/v2/foundations/the-engineering-of-uncertainty)
+
+### [Part 2: The Model Inside the Agent](/learning/agentic-ai/v2/model-inside-agent)
+
+- [What an LLM Contributes](/learning/agentic-ai/v2/model-inside-agent/what-an-llm-contributes)
+- [Sampling and Behavior](/learning/agentic-ai/v2/model-inside-agent/sampling-and-behavior)
+- [Instructions and Structured Decisions](/learning/agentic-ai/v2/model-inside-agent/instructions-and-structured-decisions)
+
+### [Part 3: From Model Calls to Agent Loops](/learning/agentic-ai/v2/agent-loops)
+
+- The Agent Loop
+- Tools and Function Calling
+- Routing and Workflow Patterns
+- Why Agents Fail
+- State, Checkpoints, and Recovery
+- From DAGs to State Machines
+
+### [Part 4: Knowledge and Memory](/learning/agentic-ai/v2/knowledge-memory)
+
+- Context Is Not Memory
+- Retrieval-Augmented Generation
+- Reliable Retrieval
+- Agentic RAG
+- GraphRAG and Structured Knowledge
+
+### [Part 5: Planning, Reasoning, and Learning](/learning/agentic-ai/v2/planning-reasoning-learning)
+
+- What Does It Mean for an Agent to Reason?
+- ReAct
+- Planning Patterns
+- Reflection and Self-Correction
+- Search and Inference-Time Compute
+- Learning from Feedback
+
+### [Part 6: Multi-Agent Systems](/learning/agentic-ai/v2/multi-agent-systems)
+
+- Why Multiple Agents?
+- Communication and Coordination
+- Voting, Debate, and Consensus
+- Multi-Agent Reliability
+
+### [Part 7: Protocols and Frameworks](/learning/agentic-ai/v2/protocols-frameworks)
+
+- Model Context Protocol
+- Building an Agent Without a Framework
+- LangGraph
+- CrewAI and Role-Based Orchestration
+- Choosing an Agent Architecture
+
+### [Part 8: Evaluation, Safety, and Production](/learning/agentic-ai/v2/evaluation-safety-production)
+
+- What Should We Evaluate?
+- Evaluating Agent Trajectories
+- Controlled Agency
+- Human-in-the-Loop Design
+- Agent Security
+- Guardrails and Alignment
+- Observability
+- Reliability Engineering for Agents
+- Deployment and Operations
+
+### [Part 9: Capstone and Synthesis](/learning/agentic-ai/v2/capstone-synthesis)
+
+- Building a Research and Analysis Agent
+- Breaking the Agent
+- Production Readiness Review

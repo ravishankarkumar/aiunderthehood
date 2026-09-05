@@ -1,5 +1,5 @@
 ---
-layout: ../../../../../../layouts/TutorialPage.astro
+layout: ../../../../../../layouts/DocsLayout.astro
 title: "Multi-Agent Orchestration"
 ---
 

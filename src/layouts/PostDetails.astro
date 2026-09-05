@@ -9,7 +9,8 @@ import Datetime from "@/components/Datetime.astro";
 import EditPost from "@/components/EditPost.astro";
 import ShareLinks from "@/components/ShareLinks.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
-import TableOfContents from "@/components/TableOfContents.astro";
+import DocsSidebar from "@/components/DocsSidebar.astro";
+import { getDocsNavSection } from "@/data/docsNav";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
@@ -36,7 +37,8 @@ const {
   hideEditPost,
 } = post.data;
 
-const { Content, headings } = await render(post);
+const { Content } = await render(post);
+const docsSection = getDocsNavSection(Astro.url.pathname);
 
 let ogImageUrl: string | undefined;
 
@@ -91,83 +93,104 @@ const nextPost =
     class="app-layout pb-16 pt-6"
     data-pagefind-body
   >
-    <div class="mx-auto max-w-6xl lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10">
-      <section class="border-b border-border pb-8">
-        <h1
-          transition:name={slugifyStr(title.replaceAll(".", "-"))}
-          class="inline-block max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl"
-        >
-          {title}
-        </h1>
-        <p class="mt-4 max-w-3xl text-lg text-foreground/70">{description}</p>
-        <div class="mt-6 flex flex-wrap items-center gap-3">
-          <div class="surface-panel inline-flex items-center rounded-full border border-border px-3.5 py-2">
-            <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+    {
+      docsSection && (
+        <div class="mb-6 lg:hidden">
+          <details class="surface-panel rounded-2xl border border-border p-4">
+            <summary class="cursor-pointer text-sm font-semibold text-foreground">
+              {docsSection.title} contents
+            </summary>
+            <div class="mt-4">
+              <DocsSidebar section={docsSection} panel={false} />
+            </div>
+          </details>
+        </div>
+      )
+    }
+
+    <div class="grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)] xl:items-start">
+      {
+        docsSection && (
+          <div class="hidden xl:sticky xl:top-28 xl:block xl:max-h-[calc(100vh-8rem)] xl:overflow-y-auto xl:pr-1">
+            <DocsSidebar section={docsSection} />
           </div>
-          <EditPost
-            {hideEditPost}
-            {post}
-            class="surface-panel max-sm:hidden rounded-full border border-border px-3.5 py-2 text-sm text-foreground/65"
-          />
+        )
+      }
+
+      <div class="min-w-0">
+        <section class="border-b border-border pb-8">
+          <h1
+            transition:name={slugifyStr(title.replaceAll(".", "-"))}
+            class="inline-block max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl"
+          >
+            {title}
+          </h1>
+          <p class="mt-4 max-w-3xl text-lg text-foreground/70">{description}</p>
+          <div class="mt-6 flex flex-wrap items-center gap-3">
+            <div class="surface-panel inline-flex items-center rounded-full border border-border px-3.5 py-2">
+              <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+            </div>
+            <EditPost
+              {hideEditPost}
+              {post}
+              class="surface-panel max-sm:hidden rounded-full border border-border px-3.5 py-2 text-sm text-foreground/65"
+            />
+          </div>
+          <div class="mt-5 flex flex-wrap gap-3">
+            {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
+          </div>
+        </section>
+
+        <article
+          id="article"
+          class="app-prose mt-10 w-full max-w-4xl prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
+        >
+          <Content />
+        </article>
+
+        <hr class="my-10 max-w-4xl" />
+
+        <div class="max-w-4xl">
+          <EditPost class="sm:hidden" {hideEditPost} {post} />
+
+          <BackToTopButton />
+
+          <ShareLinks />
         </div>
-        <div class="mt-5 flex flex-wrap gap-3">
-          {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
+
+        <hr class="my-8 max-w-4xl" />
+
+        <div data-pagefind-ignore class="grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2">
+          {
+            prevPost && (
+              <a
+                href={getPath(prevPost.id, prevPost.filePath)}
+                class="surface-panel rounded-2xl border border-border p-4 transition-colors hover:border-accent/40"
+              >
+                <IconChevronLeft class="mt-1 inline-block flex-none rtl:rotate-180" />
+                <div>
+                  <span class="text-sm text-foreground/55">Previous</span>
+                  <div class="mt-1 text-sm font-medium text-foreground">{prevPost.title}</div>
+                </div>
+              </a>
+            )
+          }
+          {
+            nextPost && (
+              <a
+                href={getPath(nextPost.id, nextPost.filePath)}
+                class="surface-panel rounded-2xl border border-border p-4 text-end transition-colors hover:border-accent/40 sm:col-start-2"
+              >
+                <div>
+                  <span class="text-sm text-foreground/55">Next</span>
+                  <div class="mt-1 text-sm font-medium text-foreground">{nextPost.title}</div>
+                </div>
+                <IconChevronRight class="mt-1 inline-block flex-none rtl:rotate-180" />
+              </a>
+            )
+          }
         </div>
-      </section>
-    </div>
-    <div class="mx-auto mt-10 grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-      <article
-        id="article"
-        class="app-prose w-full max-w-4xl prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
-      >
-        <Content />
-      </article>
-      <div class="lg:sticky lg:top-28">
-        <TableOfContents headings={headings} />
       </div>
-    </div>
-
-    <hr class="mx-auto my-10 max-w-4xl" />
-
-    <div class="mx-auto max-w-4xl">
-      <EditPost class="sm:hidden" {hideEditPost} {post} />
-
-      <BackToTopButton />
-
-      <ShareLinks />
-    </div>
-
-    <hr class="mx-auto my-8 max-w-4xl" />
-
-    <div data-pagefind-ignore class="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2">
-      {
-        prevPost && (
-          <a
-            href={getPath(prevPost.id, prevPost.filePath)}
-            class="surface-panel rounded-2xl border border-border p-4 transition-colors hover:border-accent/40"
-          >
-            <IconChevronLeft class="mt-1 inline-block flex-none rtl:rotate-180" />
-            <div>
-              <span class="text-sm text-foreground/55">Previous</span>
-              <div class="mt-1 text-sm font-medium text-foreground">{prevPost.title}</div>
-            </div>
-          </a>
-        )
-      }
-      {
-        nextPost && (
-          <a
-            href={getPath(nextPost.id, nextPost.filePath)}
-            class="surface-panel rounded-2xl border border-border p-4 text-end transition-colors hover:border-accent/40 sm:col-start-2"
-          >
-            <div>
-              <span class="text-sm text-foreground/55">Next</span>
-              <div class="mt-1 text-sm font-medium text-foreground">{nextPost.title}</div>
-            </div>
-            <IconChevronRight class="mt-1 inline-block flex-none rtl:rotate-180" />
-          </a>
-        )
-      }
     </div>
   </main>
   <Footer />

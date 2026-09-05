@@ -1,9 +1,9 @@
 ---
-title: AI & ML Engineer Interview Prep
-layout: ../../../../layouts/TutorialPage.astro
+title: AI Engineer Interview Prep
+layout: ../../../../layouts/DocsLayout.astro
 ---
 
-A complete interview preparation guide for AI Engineer and ML Engineer roles. Covers everything from ML fundamentals to system design to behavioral questions, with code samples defaulting to Python.
+A complete interview preparation guide for AI Engineer roles. It covers the ML fundamentals, deep learning intuition, LLM systems, agents, RAG, AI system design, infrastructure, coding patterns, and behavioral judgment expected in modern AI engineering interviews.
 
 The guide is structured around how interviews actually work at top AI companies. Q&A sections are concise by design — they tell you what to say in 2–3 minutes, with links to the deep-dive articles in ml-essentials and ai-engineering for the full derivations.
 
@@ -16,7 +16,7 @@ System design articles are full walkthroughs — because those questions are 45 
 ## Who This Is For
 
 - Engineers targeting **AI Engineer** roles (LLM systems, agents, RAG, inference infrastructure)
-- Engineers targeting **ML Engineer** roles (training pipelines, model development, evaluation)
+- Engineers who need enough ML depth to discuss model behavior, evaluation, and deployment trade-offs clearly
 - Senior engineers preparing for staff-level system design rounds
 - Anyone who builds AI systems and wants to be able to articulate the tradeoffs clearly
 
@@ -120,7 +120,7 @@ Full walkthroughs of the system design questions that appear in senior AI engine
 Code samples in Python where relevant.
 
 ### Published
-- [Vector Databases — Interview Guide](/learning/interview-prep/v1/db/vector-database)
+- [Vector Databases — Interview Guide](/interview/ai-engineer/v1/db/vector-database)
 
 ### Planned
 - Design a RAG System for Enterprise Search
@@ -138,7 +138,7 @@ Code samples in Python where relevant.
 The infrastructure questions that separate engineers who've shipped AI systems from those who've only trained models.
 
 ### Vector Databases
-- [Vector Databases — Interview Guide](/learning/interview-prep/v1/db/vector-database)
+- [Vector Databases — Interview Guide](/interview/ai-engineer/v1/db/vector-database)
 
 ### Feature Stores and Pipelines
 - What Is a Feature Store and Why Does It Exist?

@@ -1,7 +1,7 @@
 ---
 title: Scaling Vector Search — Distributed Architecture and Metadata Filtering
 description: How vector databases scale horizontally through sharding and replication, execute distributed queries, and handle the hard problem of combining vector search with metadata filters.
-layout: ../../../layouts/TutorialPage.astro
+layout: ../../../layouts/DocsLayout.astro
 ---
 
 A single-node vector database can handle roughly 100M–500M vectors with HNSW, or a few billion with IVF-PQ. Beyond that — or when you need high availability and fault tolerance — you need a distributed architecture. This article covers how vector databases scale out, and how they handle one of the hardest problems in the field: combining ANN search with metadata filters.
