@@ -1,6 +1,19 @@
 import type { APIRoute } from "astro";
+import { officialCtoMigratedPathPrefixes } from "@/data/officialCtoMigration";
 
-const getRobotsTxt = (sitemapURL: URL) => `
+const migratedDisallowRules = officialCtoMigratedPathPrefixes
+  .map(path => `Disallow: ${path}/`)
+  .join("\n");
+
+const aiCrawlerRules = ["GPTBot", "Google-Extended", "Google-CloudVertexBot"]
+  .map(
+    userAgent => `User-agent: ${userAgent}
+${migratedDisallowRules}`
+  )
+  .join("\n\n");
+
+const getRobotsTxt = (sitemapURL: URL) => `${aiCrawlerRules}
+
 User-agent: *
 Allow: /
 

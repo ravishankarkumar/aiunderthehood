@@ -26,6 +26,18 @@ const isOpen = (item: DocsNavItem) =>
   ]}
   data-docs-sidebar
 >
+  {
+    section.parent && (
+      <a
+        href={section.parent.href}
+        class="mb-2 flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium text-foreground/56 transition-colors hover:bg-muted/50 hover:text-foreground"
+      >
+        <span aria-hidden="true">←</span>
+        {section.parent.title}
+      </a>
+    )
+  }
+
   <a
     href={section.href}
     class="block rounded-xl px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted/50"
@@ -52,7 +64,7 @@ const isOpen = (item: DocsNavItem) =>
               {item.title}
             </a>
 
-            {item.children && (
+            {item.children && isOpen(item) && (
               <ul
                 class:list={[
                   "mt-1 space-y-1 border-s border-border ps-3",
@@ -75,7 +87,7 @@ const isOpen = (item: DocsNavItem) =>
                       {child.title}
                     </a>
 
-                    {child.children && (
+                    {child.children && isOpen(child) && (
                       <ul
                         class:list={[
                           "mt-1 space-y-1 border-s border-border ps-3",
@@ -100,7 +112,7 @@ const isOpen = (item: DocsNavItem) =>
                               {grandchild.title}
                             </a>
 
-                            {grandchild.children && (
+                            {grandchild.children && isOpen(grandchild) && (
                               <ul
                                 class:list={[
                                   "mt-1 space-y-1 border-s border-border ps-3",

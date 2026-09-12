@@ -3,7 +3,7 @@ layout: ../layouts/DocsLayout.astro
 title: "About KAVRIQ"
 ---
 
-KAVRIQ is a technical publication for engineers who want to understand the science behind AI.
+KAVRIQ is a technical publication exploring maths, software systems, and AI.
 
 Much of today's AI content focuses on tools, demos, and surface-level abstractions. KAVRIQ takes a different approach: explaining the mathematics, models, and systems behind modern AI from first principles.
 
@@ -21,25 +21,15 @@ I care deeply about clarity, depth, mathematical intuition, practical judgment, 
 
 ## Why KAVRIQ Exists
 
-I am the son of a teacher, and teaching has always held a quiet place in my imagination.
+I am the son of a teacher, and teaching has always been one of my passions.
 
-Growing up, teaching was just one of many ambitions. I also wanted to become a physicist, mathematician, author, entrepreneur, and someone who built ambitious things. Over the years, I pursued projects, built products, opened a small coaching center in Greater Noida while working full-time in Gurugram, and eventually left my job to prepare for the UPSC civil-services examination.
+That interest has taken different forms over the years: mentoring colleagues, writing explanations, discussing ideas, and opening a small coaching center in Greater Noida while working full-time in Gurugram. Across each of them, I found the same satisfaction in taking something difficult, understanding it carefully, and helping someone else see it more clearly.
 
-Some of those attempts failed. Others simply did not become what I had imagined. Beneath many of them was a desire not only to do meaningful work, but also to be known for it.
+KAVRIQ is a continuation of that instinct. It gives me a place to learn deeply, organize what I understand, and teach it through first-principles explanations. Writing an article forces me to examine gaps in my own thinking; conversations and podcasts let me learn from others while making their knowledge useful to a wider audience.
 
-In trying so hard to become something, I gradually lost touch with people I had met along the way: college friends, schoolmates, and former colleagues. Human connection, something I cared about deeply, became one of the casualties of my ambition.
+Teaching and learning give KAVRIQ its form. Curiosity gives it direction. The aim is to make difficult ideas approachable without stripping away the depth that makes them valuable.
 
-I look for different things now: simplicity, human connection, a sense of community, and work that becomes more meaningful with time. I have become more aware that a life is finite. Not every ambition can become a life's work, and not every effort needs to become an identity. I would rather be known by a small circle of people for something honest, and remain connected to them, than chase a larger idea and become a machine.
-
-KAVRIQ emerged from that realization.
-
-It gives me a place to learn in public, teach what I understand, and remain connected to people who care about understanding and building things well. It also gives me a constructive way to deal with loneliness—something I have increasingly felt while living and working in Bangalore, and something I suspect many other professionals experience too. Articles allow me to work through difficult ideas. Conversations and podcasts allow me to learn from others while making their knowledge useful to a wider audience.
-
-Teaching and learning give KAVRIQ its form. The desire to understand things deeply gives it direction. Human connection gives it its purpose.
-
-KAVRIQ may be a technical publication, but it is built with a human need for connection.
-
-KAVRIQ may never become a large identity. A small, honest one would be enough.
+KAVRIQ exists because teaching is work I find meaningful—and because the best way I know to understand something is to try to explain it well.
 
 ## A Working Philosophy
 

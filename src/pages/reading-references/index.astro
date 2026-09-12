@@ -7,18 +7,21 @@ import { SITE } from "@/config";
 
 const currentlyReading = [
   {
-    title: "An Introduction to Statistical Learning: with Applications in Python",
+    title:
+      "An Introduction to Statistical Learning: with Applications in Python",
     type: "Book",
     author:
       "Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani, and Jonathan Taylor",
-    focus: "Building a more rigorous statistical foundation for machine learning work.",
+    focus:
+      "Building a more rigorous statistical foundation for machine learning work.",
   },
   {
     title: "IIT Bombay Certificate in Agentic AI for Working Professionals",
     type: "Certification",
     author: "IIT Bombay / Great Learning",
     href: "https://www.mygreatlearning.com/iit-bombay-agentic-ai",
-    focus: "A structured way to test and strengthen my understanding of agentic systems.",
+    focus:
+      "A structured way to test and strengthen my understanding of agentic systems.",
   },
 ];
 
@@ -63,6 +66,14 @@ const finishedReading = [
     type: "Book",
     author: "Andriy Burkov",
     status: "Studied",
+    subject: "AI & Machine Learning",
+  },
+  {
+    title: "Artificial Intelligence Strategy",
+    type: "Executive Education Programme",
+    author: "Indian Institute of Management Bangalore (IIM Bangalore)",
+    href: "https://eep.iimb.ac.in/course/artificial-intelligence-strategy/",
+    status: "Completed · Batch 8",
     subject: "AI & Machine Learning",
   },
   {
@@ -165,9 +176,7 @@ const librarySections = [
     <section class="min-w-0 space-y-16 pt-3" aria-label="Reading entries">
       <section id="currently-reading" class="scroll-mt-28">
         <div class="mb-6">
-          <h2
-            class="text-2xl font-semibold tracking-tight text-foreground/92"
-          >
+          <h2 class="text-2xl font-semibold tracking-tight text-foreground/92">
             Currently Exploring
           </h2>
         </div>
@@ -180,22 +189,24 @@ const librarySections = [
                   <div class="min-w-0">
                     <p class="mb-2 text-[0.65rem] font-semibold tracking-[0.12em] text-foreground/52 uppercase">
                       {item.type}
-                      {item.href && <span class="text-foreground/35"> / External</span>}
+                      {item.href && (
+                        <span class="text-foreground/35"> / External</span>
+                      )}
                     </p>
                     <h3 class="text-xl font-semibold tracking-tight text-foreground/88">
-                    {item.href ? (
-                      <a
-                        href={item.href}
-                        class="transition-colors hover:text-accent"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {item.title}
-                      </a>
-                    ) : (
-                      item.title
-                    )}
-                  </h3>
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          class="transition-colors hover:text-accent"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {item.title}
+                        </a>
+                      ) : (
+                        item.title
+                      )}
+                    </h3>
                     <p class="mt-2 text-sm text-foreground/52">{item.author}</p>
                   </div>
                   <p class="border-l-0 text-sm leading-6 text-foreground/58 md:border-l md:border-border md:pl-6">
@@ -210,9 +221,7 @@ const librarySections = [
 
       <section id="finished-reading" class="scroll-mt-28">
         <div class="mb-6">
-          <h2
-            class="text-2xl font-semibold tracking-tight text-foreground/92"
-          >
+          <h2 class="text-2xl font-semibold tracking-tight text-foreground/92">
             Reading Shelf
           </h2>
           <p class="mt-2 max-w-2xl text-sm leading-6 text-foreground/58">
@@ -224,7 +233,9 @@ const librarySections = [
         <div class="space-y-10">
           {
             librarySections.map(section => (
-              <section aria-labelledby={`library-${section.subject.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")}`}>
+              <section
+                aria-labelledby={`library-${section.subject.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")}`}
+              >
                 <h3
                   id={`library-${section.subject.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")}`}
                   class="border-b border-border pb-3 text-sm font-semibold tracking-tight text-structure"
@@ -232,38 +243,43 @@ const librarySections = [
                   {section.subject}
                 </h3>
                 <ul class="grid gap-x-10 md:grid-cols-2">
-                  {
-                    section.items.map(item => (
-                      <li class="border-b border-border/70 py-5">
-                        <div class="min-w-0">
-                          <div class="flex flex-wrap items-center gap-2">
-                            <p class="text-[0.65rem] font-semibold tracking-[0.12em] text-foreground/52 uppercase">
-                              {item.type}
-                              {item.href && <span class="text-foreground/35"> / External</span>}
-                            </p>
-                            <span class="rounded-full border border-border px-2 py-0.5 text-[0.65rem] font-medium text-foreground/52">
-                              {item.status}
-                            </span>
-                          </div>
-                          <h4 class="mt-2 text-sm font-semibold tracking-tight text-foreground/80">
-                            {item.href ? (
-                              <a
-                                href={item.href}
-                                class="transition-colors hover:text-accent"
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                {item.title}
-                              </a>
-                            ) : (
-                              item.title
+                  {section.items.map(item => (
+                    <li class="border-b border-border/70 py-5">
+                      <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                          <p class="text-[0.65rem] font-semibold tracking-[0.12em] text-foreground/52 uppercase">
+                            {item.type}
+                            {item.href && (
+                              <span class="text-foreground/35">
+                                {" "}
+                                / External
+                              </span>
                             )}
-                          </h4>
-                          <p class="mt-1 text-sm text-foreground/46">{item.author}</p>
+                          </p>
+                          <span class="rounded-full border border-border px-2 py-0.5 text-[0.65rem] font-medium text-foreground/52">
+                            {item.status}
+                          </span>
                         </div>
-                      </li>
-                    ))
-                  }
+                        <h4 class="mt-2 text-sm font-semibold tracking-tight text-foreground/80">
+                          {item.href ? (
+                            <a
+                              href={item.href}
+                              class="transition-colors hover:text-accent"
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {item.title}
+                            </a>
+                          ) : (
+                            item.title
+                          )}
+                        </h4>
+                        <p class="mt-1 text-sm text-foreground/46">
+                          {item.author}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               </section>
             ))

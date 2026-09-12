@@ -7,15 +7,19 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import getUniqueTags from "@/utils/getUniqueTags";
 import { SITE } from "@/config";
+import { isPublicBlogPost } from "@/utils/isPublicBlogPost";
 
-const posts = await getCollection("blog");
+const posts = (await getCollection("blog")).filter(isPublicBlogPost);
 
 let tags = getUniqueTags(posts);
 ---
 
 <Layout title={`Topics | ${SITE.title}`}>
   <Header />
-  <Main pageTitle="Topics" pageDesc="Browse KAVRIQ by topic and follow threads across essays.">
+  <Main
+    pageTitle="Topics"
+    pageDesc="Browse KAVRIQ by topic and follow threads across essays."
+  >
     <ul class="flex flex-wrap gap-3">
       {tags.map(({ tag, tagName }) => <Tag {tag} {tagName} />)}
     </ul>

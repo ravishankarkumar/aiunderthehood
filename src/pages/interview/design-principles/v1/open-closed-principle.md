@@ -1,0 +1,198 @@
+---
+title: "Open-Closed Principle"
+description: Master the Open-Closed Principle (OCP) in Java with real-world examples, UML diagrams, and interview prep to build extensible, maintainable systems.
+layout: ../../../../layouts/DocsLayout.astro
+contentStatus: "Migrated legacy content; review pending"
+---
+
+## Overview
+The Open-Closed Principle (OCP), part of the SOLID principles, states that software entities (classes, modules, functions) should be **open for extension but closed for modification**, allowing new functionality without altering existing code.
+
+## Learning Objectives
+- Understand the **Open-Closed Principle** and its role in SOLID.
+- Learn to implement **OCP** in Java using interfaces and polymorphism.
+- Apply **OOP principles** (Section 2, Lecture 1), **UML** (Section 2, Lecture 2), and **design patterns** (Section 3) to OCP design.
+- Use OCP in real-world scenarios with clean code practices (Section 9).
+
+## Why the Open-Closed Principle Matters
+OCP allows systems to grow by extension rather than modification. This reduces bugs in tested code and supports scalability. For example, in a payment system, new payment methods can be added without touching the core processor. By leveraging abstraction and polymorphism, OCP ensures stability and extensibility.
+
+In software engineering, OCP helps you:
+- **Enhance Extensibility**: Add features without changing existing code.
+- **Improve Maintainability**: Minimize regression risks in tested modules.
+- **Support Scalability**: Enable systems to grow with new requirements.
+
+## Key Concepts
+### 1. Open-Closed Principle Overview
+OCP, introduced by Bertrand Meyer and popularized by Robert Martin, ensures classes are open for extension (e.g., via subclasses or interfaces) but closed for modification (no changes to source code).
+
+**Core Idea**:
+- Use abstractions (interfaces, abstract classes) to allow new implementations.
+- Avoid modifying existing classes when adding functionality.
+
+### 2. OCP in SOLID
+- **Single Responsibility** (Lecture 2): One class, one job.
+- **Open-Closed** (this lecture): Extend without modifying.
+- **Liskov Substitution** (Lecture 4): Substitutable subclasses.
+- **Interface Segregation** (Lecture 5): Focused interfaces.
+- **Dependency Inversion** (Lecture 6): Depend on abstractions.
+
+### 3. Relation to Design Patterns
+- **Strategy Pattern** (Section 3, Lecture 10): Enables algorithm extension.
+- **Factory Method** (Section 3, Lecture 3): Creates extensible objects.
+- **Decorator** (Section 3, Lecture 7): Adds behavior dynamically.
+
+### 4. Use Cases
+- Adding new payment methods in an e-commerce app.
+- Extending notification types in a social platform.
+- Supporting new report formats in a reporting system.
+
+**Example**: Extending a payment system to support new payment methods without modifying existing code.
+
+## Code Example: Extensible Payment System
+Let’s refactor a payment system to follow OCP, with a UML class diagram.
+
+### Before OCP: Non-Extensible Design
+**UML Diagram (Before)**
+```
++---------------------+
+|   PaymentProcessor  |
++---------------------+
+| -userId: String     |
+| -amount: double     |
+| -paymentType: String|
++---------------------+
+| +processPayment()   |
++---------------------+
+```
+
+```java
+// Non-extensible payment processor (violates OCP)
+public class PaymentProcessor {
+    private String userId;
+    private double amount;
+    private String paymentType;
+    
+    public PaymentProcessor(String userId, double amount, String paymentType) {
+        this.userId = userId;
+        this.amount = amount;
+        this.paymentType = paymentType;
+    }
+    
+    public void processPayment() {
+        if (paymentType.equals("CreditCard")) {
+            System.out.println("Processing credit card payment: $" + amount + " for " + userId);
+        } else if (paymentType.equals("PayPal")) {
+            System.out.println("Processing PayPal payment: $" + amount + " for " + userId);
+        } else {
+            throw new IllegalArgumentException("Unknown payment type: " + paymentType);
+        }
+    }
+}
+```
+- **Issues**:
+  - Violates OCP: Adding a new payment type requires modifying `processPayment`.
+  - Violates SRP (Lecture 2): Combines payment logic for multiple types.
+  - Hard to extend: New payment types break existing code.
+
+### After OCP: Extensible Design
+**UML Diagram (After)**
+```
++---------------------+
+|   PaymentService    |
++---------------------+
+| +process(amount: double, userId: String) |
++---------------------+
+            |
+            | implements
++---------------------+       +---------------------+
+| CreditCardService   |       |   PayPalService     |
++---------------------+       +---------------------+
+| +process            |       | +process            |
++---------------------+       +---------------------+
+            |
+            | used by
++---------------------+
+|   PaymentProcessor  |
++---------------------+
+| -service: PaymentService |
++---------------------+
+| +processPayment(amount: double, userId: String) |
++---------------------+
+```
+
+```java
+// Extensible payment system following OCP
+public interface PaymentService {
+    void process(double amount, String userId);
+}
+
+public class CreditCardService implements PaymentService {
+    @Override
+    public void process(double amount, String userId) {
+        System.out.println("Processing credit card payment: $" + amount + " for " + userId);
+    }
+}
+
+public class PayPalService implements PaymentService {
+    @Override
+    public void process(double amount, String userId) {
+        System.out.println("Processing PayPal payment: $" + amount + " for " + userId);
+    }
+}
+
+public class PaymentProcessor {
+    private final PaymentService service;
+    
+    public PaymentProcessor(PaymentService service) {
+        this.service = service;
+    }
+    
+    public void processPayment(double amount, String userId) {
+        service.process(amount, userId);
+    }
+}
+
+public class PaymentClient {
+    public static void main(String[] args) {
+        // Create processors with different services
+        PaymentProcessor creditCardProcessor = new PaymentProcessor(new CreditCardService());
+        PaymentProcessor payPalProcessor = new PaymentProcessor(new PayPalService());
+        
+        // Process payments
+        creditCardProcessor.processPayment(100.0, "user1");
+        payPalProcessor.processPayment(50.0, "user2");
+        // Output:
+        // Processing credit card payment: $100.0 for user1
+        // Processing PayPal payment: $50.0 for user2
+    }
+}
+```
+- **OCP in Action**: New services like `CryptoService` can be added without modifying `PaymentProcessor`.
+- **Design Principles**: Uses interfaces, polymorphism, and constructor injection to keep code clean and extensible.
+- **Big O**: O(1) for `processPayment` (direct call to service).
+
+**Systematic Approach**:
+- Clarified requirements (process payments, support extensibility).
+- Designed UML diagrams to show non-extensible vs. OCP-compliant designs.
+- Refactored Java code to follow OCP, using Strategy pattern (Section 3, Lecture 10).
+- Tested with `main` method for different payment types.
+
+## Real-World Application
+In an e-commerce app, OCP makes it easy to support new payment methods like cryptocurrency without changing existing logic. Combined with Dependency Injection and SRP, this principle helps build scalable and maintainable systems.
+
+## Practice Exercises
+Apply the Open-Closed Principle with these exercises:
+- **Easy**: Design a UML diagram and Java code for a `NotificationSystem`, extending notification types (e.g., email, push) without modifying core logic.
+- **Medium**: Refactor a `Logger` system to follow OCP, supporting new log outputs (e.g., console, file).
+- **Medium**: Create a `DiscountSystem` for a retail app, allowing new discount types without code changes.
+- **Hard**: Design a `ReportGenerator` for a reporting system, supporting new report formats (e.g., PDF, CSV) using OCP.
+
+Try refactoring one system in Java with a UML diagram, explaining how OCP improves extensibility.
+
+## Conclusion
+The Open-Closed Principle equips you to design extensible, maintainable Java systems by allowing new functionality without modifying existing code. By mastering OCP, you’ll optimize software, enhance scalability, and teach others effectively. This advances your progress in Section 4 of the Kavriq v1 curriculum.
+
+**Next Step**: Explore [Liskov Substitution Principle](/interview/design-principles/v1/liskov-substitution-principle) to learn about substitutable subclasses, or check out [all sections](/interview/software-engineering/v1) to continue your journey.
+
+---

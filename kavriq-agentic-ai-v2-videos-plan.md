@@ -1,141 +1,119 @@
-## 🎬 Part 1: The 14 Long-Form Video Plan (16:9 Landscape)
+# Kavriq Agentic AI v2: Video and Shorts Plan
 
-**Target Duration:** 12–22 Minutes
+## Relationship to the Article Series
 
-**Primary Engine:** Deep code architecture (Python), live execution, system diagrams, and hands-on debugging.
+The original 44-article curriculum in [`kavriq-agentic-ai-v2-plan.md`](./kavriq-agentic-ai-v2-plan.md) remains unchanged. The articles are the deep, implementation-oriented knowledge base; the videos are a separate visual narrative that selects and combines material from those articles.
 
-### **Module 1: Mechanics & Execution Control**
+The canonical production plan lives in the animation repository at:
 
-* **Ep 1: The Agentic Spectrum — LLMs vs. Workflows vs. Agents** (12–15 min)
-* *Chapters:* 1, 2, 3
-* *Core Focus:* Perception, observation space vs. state space (POMDP intuition), and building a zero-LLM deterministic agent loop in plain Python. *Includes: When NOT to use an agent.*
+`/Users/ravishankar/personal-work/animation/video-scripts/agentic-ai/plans/final-series-plan.md`
 
+If the two plans diverge, the animation repository is the source of truth for episode subjects, order, conceptual boundaries, production format, and the companion-short roster. This Kavriq document owns the article-to-video mapping and the detailed Murali visual notes for those shorts.
 
-* **Ep 2: Probabilistic Decision Components** (12–15 min)
-* *Chapters:* 4, 5, 6
-* *Core Focus:* Logits, temperature, structured outputs, Pydantic validation, and token cost accounting as a first-class constraint.
+## Series Identity and Format
 
+- **Series title:** `Agentic AI: Visualized & Demystified`
+- **Central spine:** `Turning Intent into Outcomes`
+- **Series byline:** `A Kavriq series.`
+- **Long-form slate:** 15 landscape episodes
+- **Companion slate:** 30 standalone vertical shorts, two per long-form episode
+- **Production format:** Murali animation, Kavriq research, and narration
+- **Format boundary:** No on-screen coding, editor walkthroughs, or live software builds
+- **Status:** Episode subjects, order, and conceptual boundaries are locked. Exact titles, thumbnails, runtimes, short scripts, and release dates remain production decisions.
 
-* **Ep 3: Observe-Reason-Act & Tool Contracts** (14–16 min)
-* *Chapters:* 7, 8
-* *Core Focus:* Function calling schemas, idempotency, side-effect boundaries, approval gates, and handling execution retries/timeouts.
+## The 15 Long-Form Episodes
 
+| # | Working title | Production folder | Kavriq article starting points |
+| --- | --- | --- | --- |
+| 01 | **What Is Agentic AI? AI Agents vs Workflows Explained** | `video-01-agentic-spectrum` | Chapters 1-3, 7, 9, 12 |
+| 02 | **How LLMs Power AI Agents: Models vs Agent Runtimes** | `video-02-llms-and-agent-runtimes` | Chapters 4-6 |
+| 03 | **AI Tool Calling Explained: How Agents Take Action** | `video-03-tool-calling` | Chapters 6 and 8 |
+| 04 | **MCP Explained: How AI Agents Connect to Tools and Data** | `video-04-mcp` | Chapter 28 plus the current MCP specification |
+| 05 | **AI Agent Memory vs Context Engineering: What Should It Remember?** | `video-05-memory-and-context` | Chapters 11, 13, and 15 |
+| 06 | **RAG vs Agentic RAG: How AI Agents Find Knowledge** | `video-06-rag-vs-agentic-rag` | Chapters 14-16 |
+| 07 | **AI Agent Planning Explained: ReAct and Plan-and-Execute** | `video-07-planning-and-react` | Chapters 18-20 |
+| 08 | **Reasoning Models and Test-Time Compute Explained** | `video-08-reasoning-and-test-time-compute` | Chapters 5, 18, and 22 plus current research |
+| 09 | **AI Agent Evaluation: Evals, Reflection and Self-Correction** | `video-09-evaluation-and-self-correction` | Chapters 21, 23, 33, and 34 |
+| 10 | **Multi-Agent Systems Explained: When Is a Team Better?** | `video-10-multi-agent-systems` | Chapters 24-27 |
+| 11 | **Multimodal AI Agents Explained: Seeing, Listening and Acting** | `video-11-multimodal-agents` | Chapters 2, 4, and 8 plus supplemental sources |
+| 12 | **Coding Agents Explained: From Request to Tested Change** | `video-12-coding-agents` | Chapters 7, 8, 10, 34, and 35 plus supplemental sources |
+| 13 | **AI Agent Security: Prompt Injection and Guardrails Explained** | `video-13-security-and-guardrails` | Chapters 35-38 plus current security research |
+| 14 | **AI Agent Reliability: Observability, Retries and Recovery** | `video-14-reliability-and-observability` | Chapters 10, 11, and 39-41 |
+| 15 | **AI Research Agents Explained: Can You Trust the Final Report?** | `video-15-research-agent-capstone` | Chapters 42-44 |
 
-* **Ep 4: Execution Control — Routing, DAGs & State Machines** (16–18 min)
-* *Chapters:* 9, 10, 11, 12
-* *Core Focus:* Why static chains break, state drift, handling partial execution failures, dynamic branching, and mapping execution loops to state machines.
+## Five Movements
 
+| Episodes | Movement | Driving question |
+| --- | --- | --- |
+| 01-04 | From intent to action | What is making the decision, and how does that decision affect the world? |
+| 05-06 | Information and knowledge | What should the system retain, retrieve, and place before the model? |
+| 07-09 | Strategy and verification | How does it choose a path, spend computation, and determine whether it succeeded? |
+| 10-12 | Expanded agents | What changes when we add collaborators, modalities, or a specialized environment? |
+| 13-15 | Trust under pressure | What happens when information is hostile, execution fails, or the whole system must earn our trust? |
 
+## The 30 Standalone Shorts
 
-### **Module 2: Memory, RAG & Search Space**
+Each long-form episode produces two independently useful 30-60 second vertical shorts:
 
-* **Ep 5: State & Memory — Conversation, Execution & Persistence** (15–18 min)
-* *Chapters:* 13 + Durable State from 11/12
-* *Core Focus:* Working memory vs. episodic/semantic memory, persisting execution state vs. vector storage, context expiration, and SQL/log-based state retention.
+- **Short A — Mental model or failure mode:** one memorable visual explanation, comparison, or incident.
+- **Short B — Engineering rule:** one practical decision rule, boundary, or checklist.
 
+The short must make sense without the long-form episode. It may point to the full episode, but it should not behave like a trailer or clipped excerpt.
 
-* **Ep 6: Agentic RAG & Dynamic Knowledge Retrieval** (16–20 min)
-* *Chapters:* 14, 15, 16 (+ 17 as a 3-min Coda)
-* *Core Focus:* Chunking, hybrid search, reranking, and agent-directed query planning. *GraphRAG framed strictly as a 3-minute decision matrix.*
-
-
-* **Ep 7: Inference-Time Search — ReAct to Dynamic Planning** (15–18 min)
-* *Chapters:* 18, 19, 20
-* *Core Focus:* Observable reasoning traces, ReAct from scratch, Plan-and-Execute patterns, dynamic replanning, and compute vs. latency trade-offs.
-
-
-* **Ep 8: Verification, Self-Correction & Compute Scaling** (16–18 min)
-* *Chapters:* 21, 22, 23
-* *Core Focus:* Evaluator-optimizer loops, verifiers vs. unfaithful LLM rationales, Best-of-N sampling, tree-style search, and DSPy prompt/demonstration optimization.
-
-
-* **Ep 9: Multi-Agent Topologies & Coordination** (16–20 min)
-* *Chapters:* 24, 25, 26, 27
-* *Core Focus:* Single-agent baseline rule, supervisor-worker topologies, blackboard patterns, voting/debate, and preventing infinite delegation loops.
-
-
-
-### **Module 3: Protocols, Frameworks & Production Ops**
-
-* **Ep 10: Tools as Protocols — Custom Registries & MCP** (15–18 min)
-* *Chapters:* 28, 29
-* *Core Focus:* Core integration problem, building a custom tool registry without frameworks, and standardizing tools/resources/prompts using Model Context Protocol (MCP).
-
-
-* **Ep 11: Framework Engineering — Custom vs. LangGraph vs. CrewAI** (18–20 min)
-* *Chapters:* 30, 31, 32
-* *Core Focus:* Evaluating abstractions, graph-based execution vs. role-based delegation, rebuilding the core agent in LangGraph, and when to drop frameworks entirely.
-
-
-* **Ep 12: Building an Evaluation Suite & Action Gating** (16–18 min)
-* *Chapters:* 33, 34, 35, 36
-* *Core Focus:* Trajectory vs. outcome evaluation, building a mini offline eval harness (deterministic checks + LLM judge), scoped permissions, and non-ceremonial human-in-the-loop triggers.
-
-
-* **Ep 13: Reliability, Security & Production Observability** (18–20 min)
-* *Chapters:* 37, 38, 39, 40
-* *Core Focus:* Indirect prompt injection, tool poisoning, tracing spans, circuit breakers, prompt/policy versioning, exponential backoff, and graceful fallback models.
-
-
-* **Ep 14: Capstone — Building, Evaluating & Stress-Testing an Autonomous Agent** (20–22 min)
-* *Chapters:* 41, 42, 43, 44
-* *Core Focus:* End-to-end implementation of a Research Agent, executing the Ep 12 eval harness against it, intentional chaos testing (malformed inputs, API loss, poison data), and production deployment criteria.
-
-
-
----
-
-## 📱 Part 2: The 28 Standalone Shorts Plan (9:16 Vertical Animated)
-
-**Target Duration:** 30–45 Seconds
-
-**Primary Engine:** Native 1080x1920 **Murali** rendering engine animations + concise voiceover/text overlays.
-
-**Format Rule:** 2 Shorts per Long Video topic. **Short A** focuses on a *Mental Model / Failure Mode Animation*, while **Short B** focuses on a *30-Second Engineering Rule / Code Snippet*.
-
-| # | Topic / Video Link | Short Type | Title / Angle | Visual Animation Concept (Murali) |
+| # | Parent | Type | Working title / angle | Murali visual concept |
 | --- | --- | --- | --- | --- |
-| **S1** | Ep 1 (Spectrum) | Animation | **"Why Chatbots are NOT Agents"** | Flowchart morphing a linear LLM call into a looped perception-action graph. |
-| **S2** | Ep 1 (Spectrum) | Rule | **"When NOT to build an AI Agent"** | Decision tree highlighting when a deterministic `if/else` script is superior. |
-| **S3** | Ep 2 (Probabilistic) | Animation | **"Why Temperature=0 Still Fails"** | Graph showing non-deterministic GPU floating-point variations across tokens. |
-| **S4** | Ep 2 (Probabilistic) | Rule | **"Stop trusting raw JSON from LLMs"** | Pydantic schema validation boundary blocking malformed model outputs. |
-| **S5** | Ep 3 (Tool Contracts) | Animation | **"The Danger of Side-Effect Tools"** | Infinite retry loop calling an un-idempotent Payment API multiple times. |
-| **S6** | Ep 3 (Tool Contracts) | Rule | **"Idempotency in Agent Tools"** | Diagram of idempotent request keys preventing duplicate state execution. |
-| **S7** | Ep 4 (Control Plane) | Animation | **"Why Chains (DAGs) Break in Production"** | Static DAG breaking when an unhandled edge case forces a backward retry loop. |
-| **S8** | Ep 4 (Control Plane) | Rule | **"Agents are State Machines, Not Prompts"** | State transition matrix showing `State -> Event -> Transition` execution. |
-| **S9** | Ep 5 (State/Memory) | Animation | **"Context Window ≠ Agent Memory"** | Visual comparison of short-term RAM context vs. persistent SQL/Log state. |
-| **S10** | Ep 5 (State/Memory) | Rule | **"The 3 Types of Agent Memory"** | Animated split layout: Working State, Episodic Memory, and Semantic Memory. |
-| **S11** | Ep 6 (Agentic RAG) | Animation | **"Naive RAG vs. Agentic RAG"** | Fixed vector query vs. dynamic, multi-step agent query rewriting loop. |
-| **S12** | Ep 6 (Agentic RAG) | Rule | **"When do you actually need GraphRAG?"** | Highlighting vector similarity failure on multi-hop entity relationships. |
-| **S13** | Ep 7 (Reasoning) | Animation | **"Inside a ReAct Loop (Step-by-Step)"** | Interleaved `Thought -> Action -> Observation` animated step cycle. |
-| **S14** | Ep 7 (Reasoning) | Rule | **"The Latency Penalty of Tree Search"** | Time graph contrasting single-pass generation with Monte Carlo Tree Search. |
-| **S15** | Ep 8 (Self-Correction) | Animation | **"LLM Self-Correction is a Myth"** | Showing an LLM repeating its own mistake without an external verifier check. |
-| **S16** | Ep 8 (Self-Correction) | Rule | **"The Evaluator-Optimizer Pattern"** | Generator model output passing through an explicit external code-runner verifier. |
-| **S17** | Ep 9 (Multi-Agent) | Animation | **"The Single-Agent Baseline Rule"** | Animated cost & token surge of multi-agent chat vs. single multi-tool agent. |
-| **S18** | Ep 9 (Multi-Agent) | Rule | **"Supervisor vs. Blackboard Topology"** | Centralized router agent vs. shared state space topology visual comparison. |
-| **S19** | Ep 10 (MCP) | Animation | **"What Problem Does MCP Solve?"** | $N \times M$ custom API nightmare morphing into a clean $N + M$ MCP client-server architecture. |
-| **S20** | Ep 10 (MCP) | Rule | **"MCP Tools vs. MCP Resources"** | Dynamic discovery animation separating executable tools from read-only resources. |
-| **S21** | Ep 11 (Frameworks) | Animation | **"When to Ditch LangChain/CrewAI"** | Abstraction layer pyramid showing framework hidden overhead vs. direct Python code. |
-| **S22** | Ep 11 (Frameworks) | Rule | **"Graph States vs. Role-Based Swarms"** | LangGraph explicit state graph visual vs. CrewAI role delegation visual. |
-| **S23** | Ep 12 (Evaluation) | Animation | **"Outcome Eval vs. Trajectory Eval"** | Correct final answer with a broken, costly trajectory path highlighted red. |
-| **S24** | Ep 12 (Evaluation) | Rule | **"Non-Ceremonial Human-in-the-Loop"** | Interrupted execution queue waiting for explicit high-risk action approval. |
-| **S25** | Ep 13 (Production) | Animation | **"Indirect Prompt Injection Exploit"** | Agent reading a poisoned webpage and executing unauthorized tool commands. |
-| **S26** | Ep 13 (Production) | Rule | **"Agent Circuit Breakers"** | Cost budget counter triggering a hard circuit-breaker stop at 50,000 tokens. |
-| **S27** | Ep 14 (Capstone) | Animation | **"Chaos Testing an Agent"** | Simulated network delay, malformed JSON, and API 500s hit an agent loop live. |
-| **S28** | Ep 14 (Capstone) | Rule | **"The Production Readiness Checklist"** | 5-point animated checklist: Evals, Guardrails, Idempotency, Tracing, and Timeouts. |
+| S01 | Ep 01 | Mental model | **Why a Chatbot Is Not Automatically an Agent** | A single prompt-response line transforms into an observe-decide-act loop, then into a fixed workflow to expose the differences. |
+| S02 | Ep 01 | Engineering rule | **When Not to Build an AI Agent** | A decision gate routes predictable tasks to code or workflows and uncertain tasks to bounded agents. |
+| S03 | Ep 02 | Failure mode | **Why Temperature 0 Does Not Guarantee Reliability** | Identical inputs enter a probabilistic model while runtime and system boundaries reveal where variation and failure remain. |
+| S04 | Ep 02 | Engineering rule | **Never Trust Raw Model Output as an Action** | A model proposal is stopped by schema validation, policy checks, and runtime authorization before execution. |
+| S05 | Ep 03 | Mental model | **How Text Becomes a Real-World Action** | One tool request travels through description, arguments, validation, permission, execution, and observation. |
+| S06 | Ep 03 | Engineering rule | **Validate Every Tool Call at the Boundary** | Malformed arguments and a forbidden side effect collide with typed validation and an action gate. |
+| S07 | Ep 04 | Mental model | **What Problem Does MCP Actually Solve?** | An N-by-M integration tangle reorganizes into hosts, clients, and reusable MCP servers. |
+| S08 | Ep 04 | Engineering rule | **MCP Tools, Resources, and Prompts Are Not the Same** | Three capability lanes separate executable actions, readable context, and reusable interaction templates. |
+| S09 | Ep 05 | Mental model | **Context Window Is Not Agent Memory** | A temporary context tray, durable execution log, and saved memory store exchange distinct information objects. |
+| S10 | Ep 05 | Engineering rule | **Every Memory Needs a Write, Read, and Expiry Policy** | A memory passes three gates before entering context; stale and irrelevant memories are rejected. |
+| S11 | Ep 06 | Mental model | **Naive RAG vs Agentic RAG** | A fixed one-shot query misses evidence while an agent rewrites, retrieves, checks gaps, and searches again. |
+| S12 | Ep 06 | Engineering rule | **Stop Retrieval When the Evidence Is Sufficient** | An evidence meter balances coverage, conflict, cost, and latency before allowing another search. |
+| S13 | Ep 07 | Mental model | **Inside a ReAct Loop** | Action and observation cards alternate around a changing environment until the goal or stop condition is reached. |
+| S14 | Ep 07 | Engineering rule | **Plan Ahead or React Step by Step?** | A dependency-heavy mission chooses plan-and-execute while an uncertain mission chooses a short reactive horizon. |
+| S15 | Ep 08 | Failure mode | **More Test-Time Compute Is Not Always Better** | Candidate branches multiply as cost and latency rise, while correlated errors survive the search. |
+| S16 | Ep 08 | Engineering rule | **Best-of-N Only Helps When Selection Is Trustworthy** | Several polished candidates face a verifier that can check the result instead of judging style. |
+| S17 | Ep 09 | Mental model | **A Correct Answer Can Hide a Broken Agent Run** | Two identical outcomes reveal radically different trajectories, costs, and unsafe actions. |
+| S18 | Ep 09 | Engineering rule | **Self-Correction Needs External Feedback** | An agent repeats its own error until a deterministic check or independent verifier supplies a useful signal. |
+| S19 | Ep 10 | Failure mode | **Why More Agents Can Make the Result Worse** | A small team generates duplicate work, message traffic, and a shared mistake beside a simpler single-agent run. |
+| S20 | Ep 10 | Engineering rule | **Always Establish the Single-Agent Baseline First** | A scoreboard compares quality, latency, cost, and coordination overhead before approving a team. |
+| S21 | Ep 11 | Failure mode | **What If Image, Audio, and Text Disagree?** | Three modality streams describe one event differently and force the agent to expose uncertainty. |
+| S22 | Ep 11 | Engineering rule | **Perception Confidence Is Not Permission to Act** | A confident visual interpretation reaches a separate authorization boundary before a consequential action. |
+| S23 | Ep 12 | Mental model | **From Software Request to Tested Change** | A request moves through repository context, edit, failing test, revision, diff, and human review. |
+| S24 | Ep 12 | Engineering rule | **Prefer the Smallest Verifiable Change** | A narrow patch passes focused checks while a sprawling patch expands the unseen risk surface. |
+| S25 | Ep 13 | Failure mode | **How Indirect Prompt Injection Hijacks an Agent** | A poisoned document attempts to cross from untrusted data into the instruction and action lanes. |
+| S26 | Ep 13 | Engineering rule | **Use Least Privilege and Real Action Gates** | Scoped permissions and meaningful approval stop an unsafe action outside the model. |
+| S27 | Ep 14 | Failure mode | **How a Naive Retry Causes Duplicate Actions** | A timed-out request is replayed even though the first action succeeded, producing a duplicate side effect. |
+| S28 | Ep 14 | Engineering rule | **Retries Need Idempotency, State, and Budgets** | An idempotency key, checkpoint, backoff timer, and retry budget coordinate a safe recovery. |
+| S29 | Ep 15 | Failure mode | **A Citation-Looking Report Can Still Be Untrustworthy** | Polished claims detach from weak, conflicting, or missing evidence until provenance lines reconnect them. |
+| S30 | Ep 15 | Engineering rule | **The Five Tests for a Trustworthy Agent Outcome** | A final report passes evidence, permissions, trace, evaluation, and uncertainty gates before receiving a conditional trust verdict. |
 
----
+## Article-to-Video Production Workflow
 
-## 🛠️ Execution Pipeline Workflow
-
+```text
+[44 Kavriq articles / chapter research]
+                 |
+                 v
+[15 visual episode treatments] ---> [15 Murali long-form videos]
+                 |
+                 +---------------> [30 standalone Murali shorts]
 ```
-[Write Module Articles] ──► [Film 16:9 Long Video (Python/Code focus)]
-                                   │
-                                   ▼
-[Render 9:16 Shorts in Murali] ────► [Post Short Visual Animations]
 
-```
+1. **Research from the article curriculum.** Use the mapped Kavriq chapters as the starting point, then add primary and current sources where required.
+2. **Write the visual investigation.** Each long-form episode gets its own mission, failure, comparison, and conclusion; it is not a spoken summary of several articles.
+3. **Prototype in Murali.** Validate the hardest visual sequence before narration is locked.
+4. **Derive two standalone shorts.** Build one mental-model/failure story and one engineering rule from the episode's owned concept.
+5. **Publish with cross-links.** The episode and shorts may direct viewers to the deeper Kavriq articles, while the articles embed or link back to the relevant videos.
 
-1. **Articles First:** Draft chapters on `aiunderthehood.com` for complete code precision.
-2. **Long Videos (16:9):** Focus on talking head, code editor walkthroughs, terminal outputs, and system architecture.
-3. **Murali Shorts (9:16):** Build independent visual scenes directly in Murali for crisp 9:16 vertical motion graphics.
+## Sync Rules
+
+1. Do not renumber or reshape the 44-article curriculum to match the 15-video slate.
+2. Do not add a long-form episode here unless the canonical animation plan changes first.
+3. Keep each definition owned by one long-form episode; later episodes and shorts should use brief callbacks.
+4. Treat working titles, durations, thumbnails, and release dates as provisional until their production gates are complete.
+5. If a short cannot stand alone or merely repeats the long-form opening, replace it with a sharper failure mode or engineering decision.

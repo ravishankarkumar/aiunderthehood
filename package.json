@@ -25,6 +25,7 @@
     "dayjs": "^1.11.19",
     "katex": "^0.16.44",
     "lodash.kebabcase": "^4.1.1",
+    "mermaid": "^11.17.2",
     "rehype-katex": "^7.0.1",
     "remark-collapse": "^0.1.2",
     "remark-gfm": "^4.0.1",

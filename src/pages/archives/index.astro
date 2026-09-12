@@ -7,13 +7,14 @@ import Footer from "@/components/Footer.astro";
 import Card from "@/components/Card.astro";
 import getPostsByGroupCondition from "@/utils/getPostsByGroupCondition";
 import { SITE } from "@/config";
+import { isPublicBlogPost } from "@/utils/isPublicBlogPost";
 
 // Redirect to 404 page if `showArchives` config is false
 if (!SITE.showArchives) {
   return Astro.redirect("/404");
 }
 
-const posts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = (await getCollection("blog")).filter(isPublicBlogPost);
 
 const months = [
   "January",
@@ -33,7 +34,10 @@ const months = [
 
 <Layout title={`Archives | ${SITE.title}`}>
   <Header />
-  <Main pageTitle="Archives" pageDesc="A chronological view of everything published on KAVRIQ.">
+  <Main
+    pageTitle="Archives"
+    pageDesc="A chronological view of everything published on KAVRIQ."
+  >
     {
       Object.entries(
         getPostsByGroupCondition(posts, post =>

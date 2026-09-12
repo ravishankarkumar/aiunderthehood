@@ -11,6 +11,7 @@ import expressiveCode from "astro-expressive-code";
 import { pluginShiki, pluginFrames } from "astro-expressive-code";
 import rehypeExpressiveCode from "rehype-expressive-code";
 import { SITE } from "./src/config";
+import { isOfficialCtoMigratedPath } from "./src/data/officialCtoMigration";
 
 // https://astro.build/config
 export default defineConfig({
@@ -31,6 +32,7 @@ export default defineConfig({
 
         return (
           (SITE.showArchives || pathname !== "/archives/") &&
+          !isOfficialCtoMigratedPath(pathname) &&
           !pathname.startsWith("/agentic-ai/") &&
           pathname !== "/learning/agentic-ai/"
         );

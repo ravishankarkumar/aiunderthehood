@@ -10,9 +10,10 @@ import Pagination from "@/components/Pagination.astro";
 import getUniqueTags from "@/utils/getUniqueTags";
 import getPostsByTag from "@/utils/getPostsByTag";
 import { SITE } from "@/config";
+import { isPublicBlogPost } from "@/utils/isPublicBlogPost";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  const posts = await getCollection("blog");
+  const posts = (await getCollection("blog")).filter(isPublicBlogPost);
   const tags = getUniqueTags(posts);
 
   return tags.flatMap(({ tag, tagName }) => {

@@ -2,6 +2,7 @@
 import { ClientRouter } from "astro:transitions";
 import { PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/client";
 import { SITE } from "@/config";
+import { isOfficialCtoMigratedPath } from "@/data/officialCtoMigration";
 import "@fontsource-variable/inter";
 import "@/styles/global.css";
 import "katex/dist/katex.min.css";
@@ -38,6 +39,7 @@ const {
 
 const socialImageURL = new URL(ogImage, Astro.url);
 const googleAnalyticsId = SITE.googleAnalyticsId;
+const shouldNoIndex = isOfficialCtoMigratedPath(Astro.url.pathname);
 const structuredDataType =
   schemaType ?? (pubDatetime ? "BlogPosting" : "WebPage");
 
@@ -72,6 +74,7 @@ const structuredData = {
   dir={SITE.dir}
   lang=`${SITE.lang ?? "en"}`
   class={`${scrollSmooth && "scroll-smooth"}`}
+  data-pagefind-ignore={shouldNoIndex ? "all" : undefined}
 >
   <head>
     <meta charset="UTF-8" />
@@ -85,6 +88,7 @@ const structuredData = {
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     <meta name="author" content={author} />
+    {shouldNoIndex && <meta name="robots" content="noindex, follow" />}
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <!-- Open Graph / Facebook -->

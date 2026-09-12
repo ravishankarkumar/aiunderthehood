@@ -8,6 +8,10 @@ export type DocsNavSection = {
   title: string;
   href: string;
   items: DocsNavItem[];
+  parent?: {
+    title: string;
+    href: string;
+  };
 };
 
 export const docsNavSections: DocsNavSection[] = [
@@ -115,6 +119,16 @@ export const docsNavSections: DocsNavSection[] = [
               {
                 title: "Understanding Tokenizers",
                 href: "/blogs/2025/12-03-tokenizers",
+              },
+            ],
+          },
+          {
+            title: "October",
+            href: "/blogs/2025/10",
+            children: [
+              {
+                title: "The Future of AI",
+                href: "/blogs/2025/10-06-future-of-ai",
               },
             ],
           },
@@ -678,10 +692,38 @@ const normalizePath = (path: string) =>
 export const getDocsNavSection = (pathname: string) => {
   const currentPath = normalizePath(pathname);
 
-  return docsNavSections.find(section => {
+  const section = docsNavSections.find(section => {
     const sectionPath = normalizePath(section.href);
     return (
       currentPath === sectionPath || currentPath.startsWith(`${sectionPath}/`)
     );
   });
+
+  if (
+    !section ||
+    section.href !== "/interview" ||
+    currentPath === "/interview"
+  ) {
+    return section;
+  }
+
+  const topic = section.items
+    .filter(item => item.children?.length)
+    .filter(item => {
+      const itemPath = normalizePath(item.href);
+      return currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
+    })
+    .sort((a, b) => b.href.length - a.href.length)[0];
+
+  if (!topic?.children) return section;
+
+  return {
+    title: topic.title,
+    href: topic.href,
+    parent: {
+      title: "All interview topics",
+      href: section.href,
+    },
+    items: [{ title: "Overview", href: topic.href }, ...topic.children],
+  };
 };
